@@ -1,0 +1,37 @@
+[
+    {
+        "dpi": "1234567890123",
+        "nombre_cliente" : "AUX_EDD",
+        "password":"edd1s2024"
+    },
+    {
+        "dpi": "1234567890124",
+        "nombre_cliente" : "Juan Perez",
+        "password":"JP1234"
+    },
+    {
+        "dpi": "1234567890125",
+        "nombre_cliente" : "Pedro Perez",
+        "password":"123456PP"
+    },
+    {
+        "dpi": "1234567890122",
+        "nombre_cliente" : "Maria Lopez",
+        "password":"ML4859"
+    },
+    {
+        "dpi": "1234567890127",
+        "nombre_cliente" : "Ana Martinez",
+        "password":"AM3742"
+    },
+    {
+        "dpi": "1234567890121",
+        "nombre_cliente" : "Mario Rodriguez",
+        "password":"MR4204"
+    },
+    {
+        "dpi": "1234567890129",
+        "nombre_cliente" : "Luisa Maria",
+        "password":"LM1004"
+    }
+]
