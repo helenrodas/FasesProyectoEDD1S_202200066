@@ -8,15 +8,26 @@ program main
   integer :: option,size, i,dpiAsInt,io
   character(:), allocatable :: dpi, nombreCliente, password
 
+
   character(len=100) :: filename
   integer ::  j, id_capa, n_pixeles
   integer :: fila, columna
   character(:), allocatable :: color
   
+    !Declaracion de un objeto de tipo ususario para ejemplo
+    type :: usuario
+      integer*8 :: dpi
+      ! character(:), allocatable :: nombre,password
+      character(len=100) :: nombre,password
+      ! character(len=20) :: password
+      type(abb) :: tree
+    end type usuario
   
 
   type(BTree), pointer :: root => null()
-  type(abb) :: tree
+  ! type(abb) :: tree
+
+  type(usuario) :: usuarioTemp
   type(matrix) :: m
   type(json_file) :: json
   type(json_core) :: jsonc
@@ -59,14 +70,18 @@ program main
 
 
   subroutine inicio_sesion()
-    character(len=100) :: usuario, password
+    character(len=100) :: usuario, password,dpi
     
+    integer*8 :: dpiAsInt
     print *, "--------------------"
     print *, "Ingrese su usuario: "
     read*, usuario
     
     print *, "Ingrese su password: "
     read*, password
+
+    print *, "Ingrese su dpi: "
+    read*, dpi
 
     usuario = trim(usuario)
     password = trim(password)
@@ -77,49 +92,68 @@ program main
     if (usuario == "admin" .and. password == "EDD2024") then
         call op_menuAdmin()
     else
-        call readCapas()
+        read(dpi, *) dpiAsInt
+        usuarioTemp%dpi = dpiAsInt
+        usuarioTemp%nombre = usuario
+        usuarioTemp%password = password
+        print *, "Cliente agregado!"
+        ! call readCapas()
+        print *, "----Pruebas Arbol ABB----"
+        call pruebaAbb()
         print *, "----Pruebas Matriz----"
         call pruebaMatriz()
-        ! print *, "----Pruebas Arbol ABB----"
-        ! call pruebaAbb()
+        
     end if
   end subroutine inicio_sesion
 
 
   subroutine pruebaMatriz()
-    call m%insert(1,3,"#378a61")
-    call m%insert(8,4,"#8a377c")
-    call m%insert(5,0,"#641e16")
-    call m%insert(2,6,"#FFCC27")
-    call m%insert(9,7,"#8a6b37")
-    call m%insert(0,1,"#374b8a")
-
-    call m%print()
-    call m%graficar()
+    
+    type(Node_t), pointer :: nodo
+    nodo => usuarioTemp%tree%root
+    ! call m%insert(1,3,"#378a61")
+    ! call m%insert(8,4,"#8a377c")
+    ! call m%insert(5,0,"#641e16")
+    ! call m%insert(2,6,"#FFCC27")
+    ! call m%insert(9,7,"#8a6b37")
+    ! call m%insert(0,1,"#374b8a")
+    call nodo%matriz_temp%insert(1, 3, "#ade9ff")
+    call nodo%matriz_temp%insert(8,4,"#9db9f0")
+    call nodo%matriz_temp%insert(5,0,"#fdce80")
+    call nodo%matriz_temp%insert(2,6,"#fdce80")
+    call nodo%matriz_temp%insert(9,7,"#9ca294")
+    call nodo%matriz_temp%insert(0,1,"#374b8a")
+    call nodo%matriz_temp%graficar()
+    ! call m%print()
+    ! call m%graficar()
   end subroutine pruebaMatriz
 
-  ! subroutine pruebaAbb()
-  !   call tree%insert(3)
-  !   call tree%insert(43)
-  !   call tree%insert(2)
-  !   call tree%insert(9)
-  !   call tree%insert(5)
-  !   call tree%insert(3)
-  !   call tree%insert(77)
-  !   call tree%insert(4)
+  subroutine pruebaAbb()
+    ! call tree%insert(3)
+    ! call tree%insert(43)
+    ! call tree%insert(2)
+    ! call tree%insert(9)
+    ! call tree%insert(5)
+    ! call tree%insert(3)
+    ! call tree%insert(77)
+    ! call tree%insert(4)
+    call usuarioTemp%tree%insert(3)  !esto es como que si estuviera insertando el indice de la capa, falta la matriz
+    call usuarioTemp%tree%insert(2)
+    call usuarioTemp%tree%insert(6)
+    call usuarioTemp%tree%insert(1)
 
-  !   call tree%graph("inserted")
+    call usuarioTemp%tree%graph("inserted")
 
-  !   write(*, '(A)') "Escribiendo en preorden: "
-  !   call tree%preorder()
+    write(*, '(A)') "Escribiendo en preorden: "
+    call usuarioTemp%tree%preorder()
 
-  !   write(*, '(A)') "Escribiendo en inorder: "
-  !   call tree%inorder()
+    write(*, '(A)') "Escribiendo en inorder: "
+    call usuarioTemp%tree%inorder()
 
-  !   print *, "Escribiendo en posorden: "
-  !   call tree%posorder()
+    print *, "Escribiendo en posorden: "
+    call usuarioTemp%tree%posorder()
 
-  ! end subroutine pruebaAbb
+  end subroutine pruebaAbb
 
 
   subroutine menu_admin()
@@ -247,8 +281,8 @@ subroutine readCapas()
 
         print *, "Capa:", id_capa, "Pixel (Fila, Columna):", fila, columna, "Color:" ,color
         ! call m%insert(fila,columna,color)
-        call tree%insert(id_capa)
-        call tree%graph("arbolABB")
+        ! call usuarioTemp%tree%insert(id_capa)
+        ! call usuarioTemp%tree%graph("arbolABB")
     end do
 end do
 

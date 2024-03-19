@@ -7,7 +7,7 @@ module matrix_m
         character(len=:), allocatable :: valor
     end type node_val
 
-    type :: node
+    type,public :: node
         private
         integer :: i,j
         character(len=:), allocatable :: valor
@@ -41,7 +41,7 @@ subroutine insert(self, i, j, valor)
     class(matrix), intent(inout) :: self
     integer, intent(in) :: i
     integer, intent(in) :: j
-    character(len=*), intent(in) :: valor  ! Cambiar len=: por len=*
+    character(len=*), intent(in) :: valor  
 
     type(node), pointer :: nuevo
     type(node), pointer :: fila

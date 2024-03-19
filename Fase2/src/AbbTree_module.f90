@@ -1,9 +1,11 @@
 module abb_m
+    use matrix_m
     implicit none
     private
 
-    type :: Node_t
+    type,public :: Node_t
         integer :: value
+        type(matrix) ::matriz_temp
         type(Node_t), pointer :: right => null()
         type(Node_t), pointer :: left => null()
     end type Node_t
@@ -33,6 +35,7 @@ contains
             call insertRec(self%root, val)
         end if
     end subroutine insert
+    
     recursive subroutine insertRec(root, val)
         type(Node_t), pointer, intent(inout) :: root
         integer, intent(in) :: val
