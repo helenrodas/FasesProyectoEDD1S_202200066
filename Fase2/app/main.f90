@@ -1,6 +1,7 @@
 program main
   use:: json_module
   use BTree_module
+  use abb_m
   use matrix_m
 
   implicit none
@@ -15,6 +16,7 @@ program main
   
 
   type(BTree), pointer :: root => null()
+  type(abb) :: tree
   type(matrix) :: m
   type(json_file) :: json
   type(json_core) :: jsonc
@@ -78,6 +80,8 @@ program main
         call readCapas()
         print *, "----Pruebas Matriz----"
         call pruebaMatriz()
+        ! print *, "----Pruebas Arbol ABB----"
+        ! call pruebaAbb()
     end if
   end subroutine inicio_sesion
 
@@ -92,7 +96,30 @@ program main
 
     call m%print()
     call m%graficar()
-  end subroutine
+  end subroutine pruebaMatriz
+
+  ! subroutine pruebaAbb()
+  !   call tree%insert(3)
+  !   call tree%insert(43)
+  !   call tree%insert(2)
+  !   call tree%insert(9)
+  !   call tree%insert(5)
+  !   call tree%insert(3)
+  !   call tree%insert(77)
+  !   call tree%insert(4)
+
+  !   call tree%graph("inserted")
+
+  !   write(*, '(A)') "Escribiendo en preorden: "
+  !   call tree%preorder()
+
+  !   write(*, '(A)') "Escribiendo en inorder: "
+  !   call tree%inorder()
+
+  !   print *, "Escribiendo en posorden: "
+  !   call tree%posorder()
+
+  ! end subroutine pruebaAbb
 
 
   subroutine menu_admin()
@@ -219,7 +246,9 @@ subroutine readCapas()
         call jsonc%get(colorPointer, color)
 
         print *, "Capa:", id_capa, "Pixel (Fila, Columna):", fila, columna, "Color:" ,color
-        call m%insert(fila,columna,color)
+        ! call m%insert(fila,columna,color)
+        call tree%insert(id_capa)
+        call tree%graph("arbolABB")
     end do
 end do
 
