@@ -3,9 +3,9 @@ module abb_m
     implicit none
     private
 
-    type,public :: Node_t
+    type, public :: Node_t
         integer :: value
-        type(matrix) ::matriz_temp
+        type(matrix),allocatable:: matriz_temp
         type(Node_t), pointer :: right => null()
         type(Node_t), pointer :: left => null()
     end type Node_t
@@ -22,120 +22,175 @@ module abb_m
         procedure :: graph
         procedure :: buscarId
         procedure :: buscarIdGraph
+        ! procedure :: insertarEnMatriz
     end type abb
 
 contains   
 
+
+
 subroutine buscarId(self, val,fila,columa,color)
     class(abb), intent(inout) :: self
     integer, intent(in) :: val,fila,columa
-    logical :: nodeFound
+    type(Node_t), pointer :: node
     character(len=7) ::color
 
-    nodeFound = existeNodo(self%root, val)
+    node => existeNodo(self%root, val)
     
-    if (nodeFound) then
+    if (associated(node)) then
       print *, "Nodo encontrado"
-      call self%root%matriz_temp%insert(fila,columa,color)
+      call insertarEnMatriz(node,fila,columa,color)
     else
       print *, "Nodo no encontrado"
     end if
 
     contains
 
-    recursive function existeNodo(root, value) result(nodeFound)
+    recursive function existeNodo(root, value) result(node)
         type(Node_t), pointer :: root
         integer, intent(in) :: value
-        logical :: nodeFound
+        type(Node_t), pointer :: node
 
         if (associated(root)) then
             if (root%value == value) then
-            nodeFound = .true.
+                node => root
             else if (value < root%value) then
-            nodeFound = existeNodo(root%left, value)
+                node => existeNodo(root%left, value)
             else
-            nodeFound = existeNodo(root%right, value)
+                node => existeNodo(root%right, value)
             end if
         else
-            nodeFound = .false.
+            node => null()
         end if
     end function existeNodo
+
+    subroutine insertarEnMatriz(node, fila, columna, color)
+        type(Node_t), pointer :: node
+        integer, intent(in) :: fila, columna
+        character(len=7), intent(in) :: color
+    
+        call node%matriz_temp%insert(fila, columna, color)
+        call node%matriz_temp%print
+    end subroutine insertarEnMatriz
+    
 end subroutine buscarId
 
 
 subroutine buscarIdGraph(self, val)
     class(abb), intent(inout) :: self
     integer, intent(in) :: val
-    logical :: nodeFound
+    type(Node_t), pointer :: node
 
-    nodeFound = existeNodoGraph(self%root, val)
+    node => existeNodoGraph(self%root, val)
 
-    if (nodeFound) then
+    if (associated(node)) then
       print *, "Nodo encontrado"
-      call self%root%matriz_temp%graficar()
+      call node%matriz_temp%graficar()
     else
       print *, "Nodo no encontrado"
     end if
 
     contains
 
-    recursive function existeNodoGraph(root, value) result(nodeFound)
+    recursive function existeNodoGraph(root, value) result(node)
         type(Node_t), pointer :: root
         integer, intent(in) :: value
-        logical :: nodeFound
+        type(Node_t), pointer :: node
 
         if (associated(root)) then
             if (root%value == value) then
-            nodeFound = .true.
+                node => root
             else if (value < root%value) then
-            nodeFound = existeNodoGraph(root%left, value)
+                node => existeNodoGraph(root%left, value)
             else
-            nodeFound = existeNodoGraph(root%right, value)
+                node => existeNodoGraph(root%right, value)
             end if
         else
-            nodeFound = .false.
+            node => null()
         end if
     end function existeNodoGraph
 end subroutine buscarIdGraph
 
   
+subroutine insert(self, val)
+    class(abb), intent(inout) :: self
+    integer, intent(in) :: val
 
-    !Subrutinas del tipo abb
-    subroutine insert(self, val)
-        class(abb), intent(inout) :: self
-        integer, intent(in) :: val
+    if (.not. associated(self%root)) then
+        allocate(self%root)
+        self%root%value = val
+        allocate(self%root%matriz_temp)  ! Inicializa la matriz aquí
+    else
+        call insertRec(self%root, val)
+    end if
+end subroutine insert
 
-        if (.not. associated(self%root)) then
-            allocate(self%root)
-            self%root%value = val
+recursive subroutine insertRec(root, val)
+    type(Node_t), pointer, intent(inout) :: root
+    integer, intent(in) :: val
+    
+    if (val < root%value) then
+        if (.not. associated(root%left)) then
+            allocate(root%left)
+            root%left%value = val
+            allocate(root%left%matriz_temp)  ! Inicializa la matriz aquí
         else
-            call insertRec(self%root, val)
+            call insertRec(root%left, val)
         end if
-    end subroutine insert
-    recursive subroutine insertRec(root, val)
-        type(Node_t), pointer, intent(inout) :: root
-        integer, intent(in) :: val
+    else if (val > root%value) then
+        if (.not. associated(root%right)) then
+            allocate(root%right)
+            root%right%value = val
+            allocate(root%right%matriz_temp)  ! Inicializa la matriz aquí
+        else
+            call insertRec(root%right, val)
+        end if
+    end if
+end subroutine insertRec
+
+
+ !Subrutinas del tipo abb
+    ! subroutine insert(self, val)
+    !     class(abb), intent(inout) :: self
+    !     integer, intent(in) :: val
+
+    !     if (.not. associated(self%root)) then
+    !         allocate(self%root)
+    !         self%root%value = val
+    !         allocate(self%root%matriz_temp)  ! Inicializa la matriz aquí
+    !     else
+    !         call insertRec(self%root, val)
+    !     end if
+    ! end subroutine insert
+    ! recursive subroutine insertRec(root, val)
+    !     type(Node_t), pointer, intent(inout) :: root
+    !     integer, intent(in) :: val
         
-        if (val < root%value) then
-            if (.not. associated(root%left)) then
-                allocate(root%left)
-                root%left%value = val
-            else
-                call insertRec(root%left, val)
-            end if
-        else if (val > root%value) then
-            if (.not. associated(root%right)) then
-                allocate(root%right)
-                root%right%value = val
-            else
-                call insertRec(root%right, val)
-            end if
-        end if
-    end subroutine insertRec
+    !     if (val < root%value) then
+    !         if (.not. associated(root%left)) then
+    !             allocate(root%left)
+    !             root%left%value = val
+    !             allocate(root%left%matriz_temp)
+                
+    !         else
+    !             call insertRec(root%left, val)
+    !         end if
+    !     else if (val > root%value) then
+    !         if (.not. associated(root%right)) then
+    !             allocate(root%right)
+    !             root%right%value = val
+    !             allocate(root%right%matriz_temp)
+    !         else
+    !             call insertRec(root%right, val)
+    !         end if
+    !     end if
+    ! end subroutine insertRec
 
 
 
     
+
+
 
 
 

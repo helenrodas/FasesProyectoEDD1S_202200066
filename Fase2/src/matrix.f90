@@ -18,7 +18,7 @@ module matrix_m
     end type node
 
     type, public :: matrix
-        private
+        ! private
         type(node), pointer :: root => null()
         integer :: width = 0
         integer :: height = 0

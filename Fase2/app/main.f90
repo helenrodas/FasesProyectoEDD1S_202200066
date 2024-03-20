@@ -10,9 +10,9 @@ program main
 
 
   character(len=100) :: filename
-  integer ::  j, id_capa, n_pixeles
-  integer :: fila, columna
-  character(:), allocatable :: color
+  ! integer ::  j, id_capa, n_pixeles
+  ! integer :: fila, columna
+  ! character(:), allocatable :: color
   
     !Declaracion de un objeto de tipo ususario para ejemplo
     type :: usuario
@@ -34,6 +34,11 @@ program main
   type(json_value), pointer :: listPointer, animalPointer, attributePointer
   type(json_value), pointer :: filaPointer, columnaPointer, colorPointer
   type(json_value), pointer :: pixelPointer
+  type(json_value), pointer :: listaPunteroCapa, punteroCapa, atributoPunteroCapa, punteroPixel, atributoPixel
+    logical :: capa_encontrada
+    integer :: size_capa, contador_capa, size_pixel, contador_pixel
+    character(:), allocatable :: id_capa, fila, columna, color
+    integer ::  fila_int, columna_int
 
   logical :: found
   io = 1
@@ -96,7 +101,7 @@ program main
         usuarioTemp%dpi = dpiAsInt
         usuarioTemp%nombre = usuario
         usuarioTemp%password = password
-        print *, "Cliente agregado!"
+        ! print *, "Cliente agregado!"
         ! call readCapas()
 
         print *, "----Pruebas Matriz y arbol ABB----"
@@ -257,57 +262,91 @@ program main
     call json%destroy()
 end subroutine readUsuarios
 
+! subroutine readCapas()
+  
+!   filename = 'ImagenMario.json'
+
+!   print *, "---------------------------------------"
+!   print *, "----- Capas -----"
+
+!   call json%initialize()
+!   call json%load(filename=filename)
+!   call json%info('',n_children=size)
+!   call json%get_core(jsonc)
+!   call json%get('', listPointer, found)
+
+!   ! Variables para almacenar datos
+  
+!   call usuarioTemp%tree%insert(0)
+!   do i = 1, size
+!     call jsonc%get_child(listPointer, i, animalPointer, found)
+
+!     ! Obtener el ID de la capa
+!     call jsonc%get_child(animalPointer, 'id_capa', attributePointer, found)
+!     call jsonc%get(attributePointer, id_capa)
+
+!     ! Obtener los píxeles de la capa
+!     call jsonc%get_child(animalPointer, 'pixeles', attributePointer, found)
+
+!     ! Obtener el número de píxeles en la capa
+!     call jsonc%info(attributePointer, n_children=n_pixeles)
+
+!     do j = 1, n_pixeles
+!         ! Obtener cada píxel individualmente
+!         call jsonc%get_child(attributePointer, j, pixelPointer, found)
+
+!         ! Obtener los atributos del píxel
+!         call jsonc%get_child(pixelPointer, 'fila', filaPointer, found)
+!         call jsonc%get(filaPointer, fila)
+
+!         call jsonc%get_child(pixelPointer, 'columna', columnaPointer, found)
+!         call jsonc%get(columnaPointer, columna)
+
+!         call jsonc%get_child(pixelPointer, 'color', colorPointer, found)
+!         call jsonc%get(colorPointer, color)
+
+!         print *, "Capa:", id_capa, "Pixel (Fila, Columna):", fila, columna, "Color:" ,color
+!         call usuarioTemp%tree%buscarId(0,fila,columna,color)
+!         call usuarioTemp%tree%buscarIdGraph(0)
+!         ! call m%insert(fila,columna,color)
+!         ! call usuarioTemp%tree%insert(id_capa)
+!         ! call usuarioTemp%tree%graph("arbolABB")
+!     end do
+! end do
+
+!   call json%destroy()
+! end subroutine readCapas
+
+
 subroutine readCapas()
-  
-  filename = 'capas.json'
-
-  print *, "---------------------------------------"
-  print *, "----- Capas -----"
-
   call json%initialize()
-  call json%load(filename=filename)
-  call json%info('',n_children=size)
+  call json%load(filename='ImagenMario.json')
+  call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
-  call json%get('', listPointer, found)
-
-  ! Variables para almacenar datos
-  
-
-  do i = 1, size
-    call jsonc%get_child(listPointer, i, animalPointer, found)
-
-    ! Obtener el ID de la capa
-    call jsonc%get_child(animalPointer, 'id_capa', attributePointer, found)
-    call jsonc%get(attributePointer, id_capa)
-
-    ! Obtener los píxeles de la capa
-    call jsonc%get_child(animalPointer, 'pixeles', attributePointer, found)
-
-    ! Obtener el número de píxeles en la capa
-    call jsonc%info(attributePointer, n_children=n_pixeles)
-
-    do j = 1, n_pixeles
-        ! Obtener cada píxel individualmente
-        call jsonc%get_child(attributePointer, j, pixelPointer, found)
-
-        ! Obtener los atributos del píxel
-        call jsonc%get_child(pixelPointer, 'fila', filaPointer, found)
-        call jsonc%get(filaPointer, fila)
-
-        call jsonc%get_child(pixelPointer, 'columna', columnaPointer, found)
-        call jsonc%get(columnaPointer, columna)
-
-        call jsonc%get_child(pixelPointer, 'color', colorPointer, found)
-        call jsonc%get(colorPointer, color)
-
-        print *, "Capa:", id_capa, "Pixel (Fila, Columna):", fila, columna, "Color:" ,color
-        ! call m%insert(fila,columna,color)
-        ! call usuarioTemp%tree%insert(id_capa)
-        ! call usuarioTemp%tree%graph("arbolABB")
-    end do
-end do
-
+  call json%get('', listaPunteroCapa, capa_encontrada)
+  do contador_capa = 1, size_capa
+      call jsonc%get_child(listaPunteroCapa, contador_capa, punteroCapa, capa_encontrada)
+      call jsonc%get_child(punteroCapa, 'id_capa', atributoPunteroCapa, capa_encontrada)
+      call jsonc%get(atributoPunteroCapa, id_capa)
+      call jsonc%get_child(punteroCapa, 'pixeles', atributoPunteroCapa, capa_encontrada)
+      call jsonc%info(atributoPunteroCapa,n_children=size_pixel)
+      do contador_pixel = 1, size_pixel
+          call jsonc%get_child(atributoPunteroCapa, contador_pixel, punteroPixel, capa_encontrada)
+          call jsonc%get_child(punteroPixel, 'fila', atributoPixel, capa_encontrada)
+          call jsonc%get(atributoPixel, fila)
+          call jsonc%get_child(punteroPixel, 'columna', atributoPixel, capa_encontrada)
+          call jsonc%get(atributoPixel, columna)
+          call jsonc%get_child(punteroPixel, 'color', atributoPixel, capa_encontrada)
+          call jsonc%get(atributoPixel, color)
+          read(fila, *) fila_int
+          read(columna, *) columna_int
+          call m%insert(fila_int, columna_int, color)
+      end do
+  end do
   call json%destroy()
+  print*,"Grafica Antes"
+  call m%graficar()
+  print*,"Grafica DESPUES"
 end subroutine readCapas
 
 
