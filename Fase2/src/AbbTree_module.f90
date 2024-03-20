@@ -20,9 +20,86 @@ module abb_m
         procedure :: inorder
         procedure :: posorder
         procedure :: graph
+        procedure :: buscarId
+        procedure :: buscarIdGraph
     end type abb
 
-contains    
+contains   
+
+subroutine buscarId(self, val,fila,columa,color)
+    class(abb), intent(inout) :: self
+    integer, intent(in) :: val,fila,columa
+    logical :: nodeFound
+    character(len=7) ::color
+
+    nodeFound = existeNodo(self%root, val)
+    
+    if (nodeFound) then
+      print *, "Nodo encontrado"
+      call self%root%matriz_temp%insert(fila,columa,color)
+    else
+      print *, "Nodo no encontrado"
+    end if
+
+    contains
+
+    recursive function existeNodo(root, value) result(nodeFound)
+        type(Node_t), pointer :: root
+        integer, intent(in) :: value
+        logical :: nodeFound
+
+        if (associated(root)) then
+            if (root%value == value) then
+            nodeFound = .true.
+            else if (value < root%value) then
+            nodeFound = existeNodo(root%left, value)
+            else
+            nodeFound = existeNodo(root%right, value)
+            end if
+        else
+            nodeFound = .false.
+        end if
+    end function existeNodo
+end subroutine buscarId
+
+
+subroutine buscarIdGraph(self, val)
+    class(abb), intent(inout) :: self
+    integer, intent(in) :: val
+    logical :: nodeFound
+
+    nodeFound = existeNodoGraph(self%root, val)
+
+    if (nodeFound) then
+      print *, "Nodo encontrado"
+      call self%root%matriz_temp%graficar()
+    else
+      print *, "Nodo no encontrado"
+    end if
+
+    contains
+
+    recursive function existeNodoGraph(root, value) result(nodeFound)
+        type(Node_t), pointer :: root
+        integer, intent(in) :: value
+        logical :: nodeFound
+
+        if (associated(root)) then
+            if (root%value == value) then
+            nodeFound = .true.
+            else if (value < root%value) then
+            nodeFound = existeNodoGraph(root%left, value)
+            else
+            nodeFound = existeNodoGraph(root%right, value)
+            end if
+        else
+            nodeFound = .false.
+        end if
+    end function existeNodoGraph
+end subroutine buscarIdGraph
+
+  
+
     !Subrutinas del tipo abb
     subroutine insert(self, val)
         class(abb), intent(inout) :: self
@@ -35,7 +112,6 @@ contains
             call insertRec(self%root, val)
         end if
     end subroutine insert
-    
     recursive subroutine insertRec(root, val)
         type(Node_t), pointer, intent(inout) :: root
         integer, intent(in) :: val
@@ -57,12 +133,20 @@ contains
         end if
     end subroutine insertRec
 
+
+
+    
+
+
+
+
     subroutine delete(self, val)
         class(abb), intent(inout) :: self
         integer, intent(inout) :: val
     
         self%root => deleteRec(self%root, val)
     end subroutine delete
+
     recursive function deleteRec(root, value) result(res)
         type(Node_t), pointer :: root
         integer, intent(in) :: value
@@ -98,6 +182,8 @@ contains
 
         res => root
     end function deleteRec
+
+
     recursive subroutine getMajorOfMinors(root, major)
         type(Node_t), pointer :: root, major
         if (associated(root%right)) then
@@ -246,5 +332,10 @@ contains
         10 format(I0)
     
     end function get_address_memory
+
+    
+
+
+
 
 end module abb_m

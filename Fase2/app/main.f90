@@ -98,10 +98,12 @@ program main
         usuarioTemp%password = password
         print *, "Cliente agregado!"
         ! call readCapas()
-        print *, "----Pruebas Arbol ABB----"
-        call pruebaAbb()
-        print *, "----Pruebas Matriz----"
+
+        print *, "----Pruebas Matriz y arbol ABB----"
         call pruebaMatriz()
+
+        ! print *, "----Pruebas Arbol ABB----"
+        ! call pruebaAbb()
         
     end if
   end subroutine inicio_sesion
@@ -111,49 +113,68 @@ program main
     
     type(Node_t), pointer :: nodo
     nodo => usuarioTemp%tree%root
-    ! call m%insert(1,3,"#378a61")
-    ! call m%insert(8,4,"#8a377c")
-    ! call m%insert(5,0,"#641e16")
-    ! call m%insert(2,6,"#FFCC27")
-    ! call m%insert(9,7,"#8a6b37")
-    ! call m%insert(0,1,"#374b8a")
-    call nodo%matriz_temp%insert(1, 3, "#ade9ff")
-    call nodo%matriz_temp%insert(8,4,"#9db9f0")
-    call nodo%matriz_temp%insert(5,0,"#fdce80")
-    call nodo%matriz_temp%insert(2,6,"#fdce80")
-    call nodo%matriz_temp%insert(9,7,"#9ca294")
-    call nodo%matriz_temp%insert(0,1,"#374b8a")
-    call nodo%matriz_temp%graficar()
-    ! call m%print()
-    ! call m%graficar()
+      ! Aqui aplica varias capas pero en este caso es una misma matriz solo para probar
+      call usuarioTemp%tree%insert(1)  !esto es como que si estuviera insertando el indice de la capa, falta la matriz
+      call usuarioTemp%tree%insert(3)
+      call usuarioTemp%tree%insert(5)
+      call usuarioTemp%tree%insert(2)
+      call usuarioTemp%tree%insert(9)
+      print*, "Arbol lleno!"
+      
+
+      call usuarioTemp%tree%buscarId(1,8,4,"#9db9f0")
+      call usuarioTemp%tree%buscarId(1,5,0,"#fdce80")
+      call usuarioTemp%tree%buscarId(1,2,6,"#fdce80")
+      call usuarioTemp%tree%buscarId(3,6,6,"#fdce80")
+      call usuarioTemp%tree%buscarId(3,9,4,"#9db9f0")
+      call usuarioTemp%tree%graph("grafica_ABB")
+      call usuarioTemp%tree%buscarIdGraph(3)
+      ! call usuarioTemp%tree%buscarIdGraph(3)
+      ! call usuarioTemp%tree%insert(2,m)
+      ! print *, "Matriz agregada!"
   end subroutine pruebaMatriz
 
-  subroutine pruebaAbb()
-    ! call tree%insert(3)
-    ! call tree%insert(43)
-    ! call tree%insert(2)
-    ! call tree%insert(9)
-    ! call tree%insert(5)
-    ! call tree%insert(3)
-    ! call tree%insert(77)
-    ! call tree%insert(4)
-    call usuarioTemp%tree%insert(3)  !esto es como que si estuviera insertando el indice de la capa, falta la matriz
-    call usuarioTemp%tree%insert(2)
-    call usuarioTemp%tree%insert(6)
-    call usuarioTemp%tree%insert(1)
+  ! subroutine pruebaAbb()
+  !   ! call tree%insert(3)
+  !   ! call tree%insert(43)
+  !   ! call tree%insert(2)
+  !   ! call tree%insert(9)
+  !   ! call tree%insert(5)
+  !   ! call tree%insert(3)
+  !   ! call tree%insert(77)
+  !   ! call tree%insert(4)
 
-    call usuarioTemp%tree%graph("inserted")
+  !   ! if (associated(usuarioTemp%tree%root)) then
+  !     ! Obtener un nodo del árbol (por ejemplo, el root)
+  !     ! type(Node_t), pointer :: nodo
+  !     ! nodo => usuarioTemp%tree%root
+  
+  !     ! Asignar la matriz al nodo
+  !     nodo%matriz_temp = m
+  !     ! Aqui aplica varias capas pero en este caso es una misma matriz solo para probar
+  !     call usuarioTemp%tree%insert(3,m)  !esto es como que si estuviera insertando el indice de la capa, falta la matriz
+  !     call usuarioTemp%tree%insert(2,m)
+  !     ! call usuarioTemp%tree%insert(6,miMatriz)
+  !     ! call usuarioTemp%tree%insert(1,miMatriz)
+  !     print *, "Matriz agregada!"
+  !     ! call usuarioTemp%tree%graph("inserted")
 
-    write(*, '(A)') "Escribiendo en preorden: "
-    call usuarioTemp%tree%preorder()
+  !   ! write(*, '(A)') "Escribiendo en preorden: "
+  !   ! call usuarioTemp%tree%preorder()
 
-    write(*, '(A)') "Escribiendo en inorder: "
-    call usuarioTemp%tree%inorder()
+  !   ! write(*, '(A)') "Escribiendo en inorder: "
+  !   ! call usuarioTemp%tree%inorder()
 
-    print *, "Escribiendo en posorden: "
-    call usuarioTemp%tree%posorder()
+  !   ! print *, "Escribiendo en posorden: "
+  !   ! call usuarioTemp%tree%posorder()
+      
+  !   ! else
+  !     ! print *, "El árbol del usuario no está inicializado correctamente."
+  !   ! end if
 
-  end subroutine pruebaAbb
+
+
+  ! end subroutine pruebaAbb
 
 
   subroutine menu_admin()

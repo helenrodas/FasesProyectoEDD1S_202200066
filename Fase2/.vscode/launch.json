@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "Run GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "C:/Programacion/PracticasFortran/QuintoSemestre/ProyectoEDD/Fase2/app/main.exe", // Path to the executable
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "C:/Programacion/PracticasFortran/QuintoSemestre/ProyectoEDD/Fase2/app", // Working directory
+        "preLaunchTask": "compile", // Task to run before debugging
+        "externalConsole": false,
+        "MIMode": "gdb",
+    },
+    {
+        "name": "Intel Debug Attach",
+        "type": "cppvsdbg",
+        "request": "attach",
+        "processId": "${command:pickProcess}"
+    }
+    ]
+  }
