@@ -10,11 +10,13 @@ module matrix_m
     type,public :: node
         private
         integer :: i,j
+        
         character(len=:), allocatable :: valor
         type(node), pointer :: arriba => null()
         type(node), pointer :: abajo => null()
         type(node), pointer :: derecha => null()
         type(node), pointer :: izquierda => null()
+
     end type node
 
     type, public :: matrix
@@ -22,6 +24,7 @@ module matrix_m
         type(node), pointer :: root => null()
         integer :: width = 0
         integer :: height = 0
+        integer :: node_count = 0
     contains
         procedure :: insert
         procedure :: insertarCabeceraFila
@@ -33,10 +36,87 @@ module matrix_m
         procedure :: imprimirEncabezadoColumnas
         procedure :: obtenerValor
         procedure :: graficar
-
+        procedure :: add_matrix
+        procedure :: init
     end type matrix
-
+    
 contains
+
+subroutine add_matrix(self, other_matrix)
+    class(matrix), intent(inout) :: self
+    class(matrix), intent(in) :: other_matrix
+    type(node), pointer :: current_node
+    type(node), pointer :: next_node
+    type(node), pointer :: temp_node
+
+    ! Verificar si other_matrix%root es null
+    if (.not. associated(other_matrix%root)) then
+        print *, "Error: other_matrix%root es null"
+        return
+    end if
+
+    ! Inicializar current_node al nodo raíz de other_matrix
+    current_node => other_matrix%root
+
+    ! Recorrer la matriz 'other_matrix' e insertar cada valor en 'self'
+    do while (associated(current_node))
+        ! Imprimir i y j en todos los nodos
+        print *, "i:", current_node%i
+        print *, "j:", current_node%j
+
+        ! Determinar el próximo nodo a visitar antes de procesar el nodo actual
+        if (associated(current_node%derecha)) then
+            next_node => current_node%derecha
+            temp_node => current_node%derecha
+            do while (associated(temp_node%abajo))
+                temp_node => temp_node%abajo
+                print *, "i:", temp_node%i
+                print *, "j:", temp_node%j
+                if (temp_node%i /= -1 .and. temp_node%j /= -1) then
+                    print *, "valor:", temp_node%valor
+                    call self%insert(temp_node%i, temp_node%j, temp_node%valor)
+                    print *, "se pudo agregar un nodo :D"
+                end if
+            end do
+        else
+            next_node => null()
+        end if
+
+        ! Verificar si i y j son diferentes de -1 para considerar el valor del nodo
+        if (current_node%i /= -1 .and. current_node%j /= -1) then
+            ! Imprimir el valor del nodo
+            print *, "valor:", current_node%valor
+            ! Insertar el nodo actual en la matriz 'self'
+            call self%insert(current_node%i, current_node%j, current_node%valor)
+            print *, "se pudo agregar un nodo :D"
+        end if
+
+        ! Mover al siguiente nodo
+        current_node => next_node
+    end do
+end subroutine add_matrix
+
+
+
+
+
+
+
+
+
+
+
+subroutine init(self)
+    class(matrix), intent(inout) :: self
+    
+    ! Inicializa la matriz combinada
+    self%width = 0
+    self%height = 0
+    self%root => null()
+end subroutine init
+
+
+
 subroutine insert(self, i, j, valor)
     class(matrix), intent(inout) :: self
     integer, intent(in) :: i
@@ -266,6 +346,9 @@ end subroutine insert
     end function obtenerValor
 
 
+    
+
+
     subroutine graficar(self)
         class(matrix), intent(in) :: self
         
@@ -378,6 +461,14 @@ end subroutine insert
             print *, "La imagen fue generada exitosamente"
         end if
     end subroutine graficar
+    
+
+
+    
+    
+    
+    
+    
     
 
 end module matrix_m

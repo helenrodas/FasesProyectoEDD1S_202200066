@@ -22,6 +22,7 @@ module abb_m
         procedure :: graph
         procedure :: buscarId
         procedure :: buscarIdGraph
+        procedure :: GraphCapa
         ! procedure :: insertarEnMatriz
     end type abb
 
@@ -76,21 +77,39 @@ subroutine buscarId(self, val,fila,columa,color)
 end subroutine buscarId
 
 
-subroutine buscarIdGraph(self, val)
+!Esta funcion es para cuando le mando un array de capas
+subroutine buscarIdGraph(self, ids)
     class(abb), intent(inout) :: self
-    integer, intent(in) :: val
+    integer, dimension(:), intent(in) :: ids
+    integer :: num_ids, i
     type(Node_t), pointer :: node
+    type(matrix), pointer :: combined_matrix
 
-    node => existeNodoGraph(self%root, val)
+    num_ids = size(ids)
 
-    if (associated(node)) then
-      print *, "Nodo encontrado"
-      call node%matriz_temp%graficar()
-    else
-      print *, "Nodo no encontrado"
-    end if
+    ! Inicializar matriz combinada
+    allocate(combined_matrix)
+    call combined_matrix%init()
 
-    contains
+    ! Recorrer cada ID y encontrar el nodo correspondiente
+    do i = 1, num_ids
+        node => existeNodoGraph(self%root, ids(i))
+        if (associated(node)) then
+            print *, "Nodo encontrado con ID:", ids(i)
+            ! Agregar la matriz del nodo a la matriz combinada
+            print*, "matriz del nodo"
+            call node%matriz_temp%print()
+            call combined_matrix%add_matrix(node%matriz_temp)
+        else
+            print *, "Nodo no encontrado con ID:", ids(i)
+        end if
+    end do
+
+    ! Graficar la matriz combinada
+    call combined_matrix%graficar()
+
+    deallocate(combined_matrix)
+contains
 
     recursive function existeNodoGraph(root, value) result(node)
         type(Node_t), pointer :: root
@@ -110,6 +129,45 @@ subroutine buscarIdGraph(self, val)
         end if
     end function existeNodoGraph
 end subroutine buscarIdGraph
+
+
+!Esta es para cuando solo quiero graficar una capa
+
+
+subroutine GraphCapa(self, val)
+    class(abb), intent(inout) :: self
+    integer, intent(in) :: val
+    type(Node_t), pointer :: node
+
+    node => buscarNodoCapa(self%root, val)
+
+    if (associated(node)) then
+      print *, "Nodo encontrado"
+      call node%matriz_temp%graficar()
+    else
+      print *, "Nodo no encontrado"
+    end if
+
+    contains
+
+    recursive function buscarNodoCapa(root, value) result(node)
+        type(Node_t), pointer :: root
+        integer, intent(in) :: value
+        type(Node_t), pointer :: node
+
+        if (associated(root)) then
+            if (root%value == value) then
+                node => root
+            else if (value < root%value) then
+                node => buscarNodoCapa(root%left, value)
+            else
+                node => buscarNodoCapa(root%right, value)
+            end if
+        else
+            node => null()
+        end if
+    end function buscarNodoCapa
+end subroutine GraphCapa
 
   
 subroutine insert(self, val)

@@ -39,6 +39,7 @@ program main
     integer :: size_capa, contador_capa, size_pixel, contador_pixel
     character(:), allocatable :: id_capa, fila, columna, color
     integer ::  fila_int, columna_int
+    integer, dimension(:), allocatable :: ids_a_buscar
 
   logical :: found
   io = 1
@@ -124,16 +125,21 @@ program main
       call usuarioTemp%tree%insert(5)
       call usuarioTemp%tree%insert(2)
       call usuarioTemp%tree%insert(9)
-      print*, "Arbol lleno!"
+      print*, "Arbol tiene datos!"
       
 
-      call usuarioTemp%tree%buscarId(1,8,4,"#9db9f0")
+      call usuarioTemp%tree%buscarId(1,3,4,"#9db9f0")
       call usuarioTemp%tree%buscarId(1,5,0,"#fdce80")
       call usuarioTemp%tree%buscarId(1,2,6,"#fdce80")
       call usuarioTemp%tree%buscarId(3,6,6,"#fdce80")
-      call usuarioTemp%tree%buscarId(3,9,4,"#9db9f0")
+      call usuarioTemp%tree%buscarId(3,1,4,"#9db9f0")
       call usuarioTemp%tree%graph("grafica_ABB")
-      call usuarioTemp%tree%buscarIdGraph(3)
+      allocate(ids_a_buscar(2))  ! Tamaño del arreglo
+      ids_a_buscar = [1, 3]      ! Valores del arreglo
+  
+      ! Llamamos al método buscarIdGraph con el arreglo de IDs
+      call usuarioTemp%tree%buscarIdGraph(ids_a_buscar)
+      ! call usuarioTemp%tree%buscarIdGraph(3)
       ! call usuarioTemp%tree%buscarIdGraph(3)
       ! call usuarioTemp%tree%insert(2,m)
       ! print *, "Matriz agregada!"
