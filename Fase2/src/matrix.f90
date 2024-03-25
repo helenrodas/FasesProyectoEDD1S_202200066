@@ -97,15 +97,6 @@ subroutine add_matrix(self, other_matrix)
 end subroutine add_matrix
 
 
-
-
-
-
-
-
-
-
-
 subroutine init(self)
     class(matrix), intent(inout) :: self
     
@@ -461,14 +452,6 @@ end subroutine insert
             print *, "La imagen fue generada exitosamente"
         end if
     end subroutine graficar
-    
-
-
-    
-    
-    
-    
-    
     
 
 end module matrix_m

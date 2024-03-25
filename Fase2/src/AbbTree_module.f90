@@ -246,13 +246,6 @@ end subroutine insertRec
 
 
 
-    
-
-
-
-
-
-
     subroutine delete(self, val)
         class(abb), intent(inout) :: self
         integer, intent(inout) :: val
@@ -306,56 +299,93 @@ end subroutine insertRec
         end if
     end subroutine getMajorOfMinors
 
-    subroutine preorder(self)
+    function preorder(self, num_nodes)
         class(abb), intent(in) :: self
-        
-        call preorderRec(self%root)
-        write(*, '()')
-    end subroutine preorder
-    recursive subroutine preorderRec(root)
+        integer, intent(in) :: num_nodes
+        integer, dimension(:), allocatable :: preorder
+        integer :: count
+        count = 0
+        allocate(preorder(num_nodes))
+        call preorderRec(self%root, num_nodes, count, preorder)
+        preorder = preorder  ! Asigna el resultado al nombre de la función
+    end function preorder
+    
+    recursive subroutine preorderRec(root, num_nodes, count, node_values)
         type(Node_t), pointer, intent(in) :: root
-
-        if(associated(root)) then
+        integer, intent(in) :: num_nodes
+        integer, intent(inout) :: count
+        integer, dimension(:), allocatable, intent(inout) :: node_values
+    
+        if(associated(root) .and. count < num_nodes) then
             ! RAIZ - IZQ - DER
-            write(*, '(I0 A)', advance='no') root%value, " - "
-            call preorderRec(root%left)
-            call preorderRec(root%right)
+            if (count < num_nodes) then
+                node_values(count+1) = root%value
+                count = count + 1
+            end if
+            call preorderRec(root%left, num_nodes, count, node_values)
+            call preorderRec(root%right, num_nodes, count, node_values)
         end if
     end subroutine preorderRec
-
-    subroutine inorder(self)
-        class(abb), intent(in) :: self
+    
+    
+        function inorder(self, num_nodes)
+            class(abb), intent(in) :: self
+            integer, intent(in) :: num_nodes
+            integer, dimension(:), allocatable :: inorder
+            integer :: count
+            count = 0
+            allocate(inorder(num_nodes))
+            call inordenRec(self%root, num_nodes, count, inorder)
+            print *, ""
+            inorder = inorder  ! Asigna el resultado al nombre de la función
+        end function inorder
         
-        call inordenRec(self%root)
-        print *, ""
-    end subroutine inorder
-    recursive subroutine inordenRec(root)
-        type(Node_t), pointer, intent(in) :: root
-
-        if(associated(root)) then
-            ! IZQ - RAIZ - DER
-            call inordenRec(root%left)
-            write(*, '(I0 A)', advance='no') root%value, " - "
-            call inordenRec(root%right)
-        end if
-    end subroutine inordenRec
-
-    subroutine posorder(self)
-        class(abb), intent(in) :: self
+        recursive subroutine inordenRec(root, num_nodes, count, node_values)
+            type(Node_t), pointer, intent(in) :: root
+            integer, intent(in) :: num_nodes
+            integer, intent(inout) :: count
+            integer, dimension(:), allocatable, intent(inout) :: node_values
         
-        call posordenRec(self%root)
-        print *, ""
-    end subroutine posorder
-    recursive subroutine posordenRec(root)
-        type(Node_t), pointer, intent(in) :: root
-
-        if(associated(root)) then
-            ! IZQ - DER - RAIZ
-            call posordenRec(root%left)
-            call posordenRec(root%right)
-            write(*, '(I0 A)', advance='no') root%value, " - "
-        end if
-    end subroutine posordenRec
+            if(associated(root) .and. count < num_nodes) then
+                ! IZQ - RAIZ - DER
+                call inordenRec(root%left, num_nodes, count, node_values)
+                if (count < num_nodes) then
+                    node_values(count+1) = root%value
+                    count = count + 1
+                end if
+                call inordenRec(root%right, num_nodes, count, node_values)
+            end if
+        end subroutine inordenRec
+        
+    
+        function posorder(self, num_nodes)
+            class(abb), intent(in) :: self
+            integer, intent(in) :: num_nodes
+            integer, dimension(:), allocatable :: posorder
+            integer :: count
+            count = 0
+            allocate(posorder(num_nodes))
+            call posordenRec(self%root, num_nodes, count, posorder)
+            print *, ""
+            posorder = posorder  ! Asigna el resultado al nombre de la función
+        end function posorder
+        
+        recursive subroutine posordenRec(root, num_nodes, count, node_values)
+            type(Node_t), pointer, intent(in) :: root
+            integer, intent(in) :: num_nodes
+            integer, intent(inout) :: count
+            integer, dimension(:), allocatable, intent(inout) :: node_values
+        
+            if(associated(root) .and. count < num_nodes) then
+                ! IZQ - DER - RAIZ
+                call posordenRec(root%left, num_nodes, count, node_values)
+                call posordenRec(root%right, num_nodes, count, node_values)
+                if (count < num_nodes) then
+                    node_values(count+1) = root%value
+                    count = count + 1
+                end if
+            end if
+        end subroutine posordenRec
 
     subroutine graph(self, filename)
         class(abb), intent(in) :: self
@@ -446,7 +476,52 @@ end subroutine insertRec
     
     end function get_address_memory
 
+    subroutine recorrido_amplitud(self, cadena)
+        class(abb), intent(in) :: self
+        character(len=:), allocatable, intent(out) :: cadena
+        integer :: h, i
     
+        cadena = ""
+        h = altura(self%root)
+        do i = 1, h
+            call agregarNivel(self%root, i, cadena)
+        end do
+    end subroutine recorrido_amplitud
+    
+    recursive subroutine agregarNivel(root, nivel, cadena)
+        type(Node_t), pointer, intent(in) :: root
+        integer, intent(in) :: nivel
+        character(len=:), allocatable, intent(inout) :: cadena
+        character(len=20) :: valor_str
+    
+        if (.not. associated(root)) then
+            return
+        else if (nivel == 1) then
+            write(valor_str, '(I0)') root%value
+            cadena = trim(cadena) // trim(valor_str) // " - "
+        else if (nivel > 1) then
+            call agregarNivel(root%left, nivel-1, cadena)
+            call agregarNivel(root%right, nivel-1, cadena)
+        end if
+    end subroutine agregarNivel
+    
+    recursive function altura(root) result(h)
+    type(Node_t), pointer, intent(in) :: root
+    integer :: h, h1, h2
+
+    if (.not. associated(root)) then
+        h = 0
+    else
+        h1 = altura(root%left)
+        h2 = altura(root%right)
+        if (h1 > h2) then
+            h = h1 + 1
+        else
+            h = h2 + 1
+        end if
+    end if
+end function altura
+
 
 
 
