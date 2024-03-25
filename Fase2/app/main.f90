@@ -9,10 +9,11 @@ program main
   integer :: option,size, i,dpiAsInt,io
   character(:), allocatable :: dpi, nombreCliente, password
   integer, dimension(:), allocatable :: capas
-  character(len=:), allocatable :: recorrido
-  integer :: id,numImg,canti
+  character(len=:), allocatable :: recorrido,nombre_alb
+  integer :: id,numImg,canti, n, count, pos, id_capa_int
   character(len=100) :: filename
-  integer, dimension(:), allocatable :: cadena_id, cadena_preorder, cadena_inorder, cadena_posorder,ordenCapas
+  character(len=:), allocatable :: amplitud_rec, amplitud_rec2
+  integer, dimension(:), allocatable :: cadena_id, cadena_preorder, cadena_inorder, cadena_posorder,ordenCapas,album,amplitud_int
   ! integer ::  j, id_capa, n_pixeles
   ! integer :: fila, columna
   ! character(:), allocatable :: color
@@ -25,12 +26,13 @@ program main
       ! character(len=20) :: password
       type(abb) :: tree
       type(avl) :: avlTree
+      ! type(double_linkedList) :: listaAlbums
     end type usuario
   
 
   type(BTree), pointer :: root => null()
   ! type(abb) :: tree
-
+  type(abb) :: arbolTemp
   type(usuario) :: usuarioTemp
   type(matrix) :: m
   type(json_file) :: json
@@ -51,7 +53,6 @@ program main
     call menu_inicial()
     read(*, *) option
     select case(option)
-
     case(1)
       call inicio_sesion()
     case(2)
@@ -78,7 +79,7 @@ program main
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_inicial
 
-
+  !Opcion inicio de sesion como usuario normal
   subroutine inicio_sesion()
     character(len=100) :: usuario, password,dpi
     
@@ -96,9 +97,6 @@ program main
     usuario = trim(usuario)
     password = trim(password)
     
-    ! print *, "Usuario ingresado: ", usuario
-    ! print *, "Contrasena ingresada: ", password
-    
     if (usuario == "admin" .and. password == "EDD2024") then
         call op_menuAdmin()
     else
@@ -107,17 +105,49 @@ program main
         usuarioTemp%nombre = usuario
         usuarioTemp%password = password
         ! print *, "Cliente agregado!"
-        ! call readCapas()
+        call readCapas()
 
         print *, "----Pruebas Matriz y arbol ABB----"
         call pruebaMatriz()
 
         print *, "----Pruebas Arbol AVL----"
         call readImg()
+        print*, "--------Recorrido por arbol de imagenes--------"
+        arbolTemp = usuarioTemp%avlTree%getABB(3)
+        call arbolTemp%recorrido_amplitud(amplitud_rec)
+        
+        print *, "Amplitud: " , amplitud_rec
+
+        cadena_id = usuarioTemp%avlTree%getABBInt(3)
+        ! print * , "Amplitud con int cadena: " , cadena_id
+        call usuarioTemp%tree%buscarIdGraph(cadena_id)
+
+
+        ! call usuarioTemp%tree%buscarIdGraph(cadena_id)
+
+        ! print *, "----Pruebas Albums----"
+        ! call readAlbum()
         
         
     end if
   end subroutine inicio_sesion
+
+
+  subroutine menu_cargaArchivos()
+    print *, " "
+    print *, "...................................."
+    print *, "      Carga masiva de Archivos      "
+    print *, "...................................."
+    print *, "1. Carga de Capas"
+    print *, "2. Carga de Imagenes"
+    print *, "3. Carga de Albums"
+    print *, "4. Salir"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_cargaArchivos
+
+
+
 
 
   subroutine pruebaMatriz()
@@ -129,7 +159,7 @@ program main
       call usuarioTemp%tree%insert(3)
       call usuarioTemp%tree%insert(5)
       call usuarioTemp%tree%insert(2)
-      call usuarioTemp%tree%insert(9)
+      call usuarioTemp%tree%insert(10)
       call usuarioTemp%tree%insert(10)
       print*, "Arbol tiene datos!"
       
@@ -141,50 +171,47 @@ program main
       call usuarioTemp%tree%buscarId(3,1,4,"#9db9f0")
       call usuarioTemp%tree%buscarId(10,3,7,"#fdce80")
       call usuarioTemp%tree%graph("grafica_ABB")
-      allocate(ids_a_buscar(2))  ! Tamaño del arreglo
-      ids_a_buscar = [1, 3]      ! Valores del arreglo
+      ! allocate(ids_a_buscar(2))  ! Tamaño del arreglo
+      ! ids_a_buscar = [1, 3]      ! Valores del arreglo
   
       ! Llamamos al método buscarIdGraph con el arreglo de IDs
-      call usuarioTemp%tree%buscarIdGraph(ids_a_buscar)
+      ! call usuarioTemp%tree%buscarIdGraph(ids_a_buscar)
       ! call usuarioTemp%tree%buscarIdGraph(3)
       ! call usuarioTemp%tree%buscarIdGraph(3)
       ! call usuarioTemp%tree%insert(2,m)
       ! print *, "Matriz agregada!"
 
-      ! print*, "--------Recorrido por arbol de imagenes--------"
-      ! cadena_id = usuarioTemp%avlTree%getABB(3)
-      ! print * , "Amplitud: " , cadena_id
-      ! call usuarioTemp%tree%buscarIdGraph(cadena_id)
+
 
       print*, "--------Recorrido limitado--------"
-      cadena_preorder = usuarioTemp%tree%preorder(3)
+      cadena_preorder = usuarioTemp%tree%preorder(4)
       print*, "Orden preorder"
       print*, cadena_preorder
       ! call usuarioTemp%tree%buscarIdGraph(cadena_preorder)
 
-      cadena_posorder = usuarioTemp%tree%posorder(3)
+      cadena_posorder = usuarioTemp%tree%posorder(4)
       print*, "Orden posorder"
       print*, cadena_posorder
       ! call usuarioTemp%tree%buscarIdGraph(cadena_posorder)
 
-      cadena_inorder = usuarioTemp%tree%inorder(3)
+      cadena_inorder = usuarioTemp%tree%inorder(4)
       print*, "Orden inorder"
       print*, cadena_inorder
       ! call usuarioTemp%tree%buscarIdGraph(cadena_id)
 
-      print*, "--------Recorrido por capas--------"
-      print *, "Ingrese numero de capas a graficar: "
-      read *, numImg
+      ! print*, "--------Recorrido por capas--------"
+      ! print *, "Ingrese numero de capas a graficar: "
+      ! read *, numImg
 
-      allocate(ordenCapas(numImg))
-      do canti =1 , numImg
-        print *, "Ingrese id de la capa", canti, ": "
-        read *, ordenCapas(canti)
-      end do
+      ! allocate(ordenCapas(numImg))
+      ! do canti =1 , numImg
+      !   print *, "Ingrese id de la capa", canti, ": "
+      !   read *, ordenCapas(canti)
+      ! end do
 
-      print *, "Los valores de las capas son: ", ordenCapas
-      call usuarioTemp%tree%buscarIdGraph(ordenCapas)
-      deallocate(ordenCapas)
+      ! print *, "Los valores de las capas son: ", ordenCapas
+      ! call usuarioTemp%tree%buscarIdGraph(ordenCapas)
+      ! deallocate(ordenCapas)
 
 
   end subroutine pruebaMatriz
@@ -370,7 +397,7 @@ end subroutine readUsuarios
 
 subroutine readCapas()
   call json%initialize()
-  call json%load(filename='ImagenMario.json')
+  call json%load(filename='capa.json')
   call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
   call json%get('', listaPunteroCapa, capa_encontrada)
@@ -388,13 +415,16 @@ subroutine readCapas()
           call jsonc%get(atributoPixel, columna)
           call jsonc%get_child(punteroPixel, 'color', atributoPixel, capa_encontrada)
           call jsonc%get(atributoPixel, color)
+          read(id_capa, *) id_capa_int
           read(fila, *) fila_int
           read(columna, *) columna_int
-          call m%insert(fila_int, columna_int, color)
+          ! call usuarioTemp%tree%insert(id_capa_int)
+          call m%insert( columna_int,fila_int, color)
       end do
   end do
   call json%destroy()
   print*,"Grafica Antes"
+  ! call usuarioTemp%tree%graph("grafica_ABBJson")
   call m%graficar()
   print*,"Grafica DESPUES"
 end subroutine readCapas
@@ -423,11 +453,11 @@ subroutine readImg()
           call jsonc%get(punteroPixel, capas(contador_pixel))
       end do
 
-      print*, "ID: ", id
+      ! print*, "ID: ", id
       call usuarioTemp%avlTree%insert(id)
       call usuarioTemp%avlTree%insertInABB(id,capas)
       
-      print*, "Capas: ", capas
+      ! print*, "Capas: ", capas
 
       deallocate(capas)
   end do
@@ -435,6 +465,41 @@ subroutine readImg()
   call json%destroy()
 end subroutine readImg
 
+
+subroutine readAlbum()
+
+
+  call json%initialize()
+  call json%load(filename='album.json')
+  call json%info('',n_children=size_capa)
+  call json%get_core(jsonc)
+  call json%get('', listaPunteroCapa, capa_encontrada)
+
+  do contador_capa = 1, size_capa
+      call jsonc%get_child(listaPunteroCapa, contador_capa, punteroCapa, capa_encontrada)
+      call jsonc%get_child(punteroCapa, 'nombre_album', atributoPunteroCapa, capa_encontrada)
+      call jsonc%get(atributoPunteroCapa, nombre_alb)
+      call jsonc%get_child(punteroCapa, 'imgs', atributoPunteroCapa, capa_encontrada)
+      call jsonc%info(atributoPunteroCapa,n_children=size_pixel)
+      allocate(album(size_pixel))
+
+      do contador_pixel = 1, size_pixel
+          call jsonc%get_child(atributoPunteroCapa, contador_pixel, punteroPixel, capa_encontrada)
+          call jsonc%get(punteroPixel, album(contador_pixel))
+      end do
+
+      ! print*, "nombre_album: ", nombre_alb
+      ! call usuarioTemp%listaAlbums%push(nombre_alb)
+      
+      ! print*, "imgs: ", album
+
+      deallocate(album)
+  end do
+  ! call usuarioTemp%listaAlbums%print()
+  ! call usuarioTemp%listaAlbums%print_dot("almbum prueba")
+
+  call json%destroy()
+end subroutine readAlbum
 
 
 end program main

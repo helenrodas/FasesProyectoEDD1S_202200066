@@ -23,12 +23,11 @@ module abb_m
         procedure :: buscarId
         procedure :: buscarIdGraph
         procedure :: GraphCapa
+        procedure :: recorrido_amplitud
         ! procedure :: insertarEnMatriz
     end type abb
 
 contains   
-
-
 
 subroutine buscarId(self, val,fila,columa,color)
     class(abb), intent(inout) :: self

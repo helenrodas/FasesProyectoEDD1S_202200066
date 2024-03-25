@@ -26,6 +26,7 @@ module avl_module
         procedure :: generateGraph
         procedure :: insertInABB
         procedure :: getABB
+        procedure :: getABBInt
         
     end type avl
 
@@ -306,6 +307,22 @@ subroutine write_dot(code)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         type(Node_AVL), pointer :: node
+        type(abb), pointer :: result  ! Cambia el tipo de 'result' a 'abb'
+    
+        node => search1(self%root, id)
+        if (associated(node)) then
+            result => node%arbol
+        else
+            nullify(result)
+        end if
+    end function getABB
+    
+
+
+    function getABBInt(self, id) result(result)
+        class(avl), intent(inout) :: self
+        integer, intent(in) :: id
+        type(Node_AVL), pointer :: node
         integer, dimension(:), pointer :: result  ! Especifica el tipo de 'result' como un arreglo de enteros
     
         node => search1(self%root, id)
@@ -314,7 +331,8 @@ subroutine write_dot(code)
         else
             nullify(result)
         end if
-    end function getABB
+    end function getABBInt
+    
     
     
     recursive function search1(root, id) result(node)
