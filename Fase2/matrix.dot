@@ -1,35 +1,23 @@
  digraph Matrix {
  node[shape = "box"]
  "Nodo0_0"[label = "root", group="0"]                                                                                                                  
- "Nodo0_0"->"Nodo4_0"
- "Nodo0_0"->"Nodo4_0"[dir = back]
+ "Nodo0_0"->"Nodo6_0"
+ "Nodo0_0"->"Nodo6_0"[dir = back]
  "Nodo0_0"->"Nodo0_2"
  "Nodo0_0"->"Nodo0_2"[dir = back]
- "Nodo4_0"[label = "3", group="4"]                                                                                                                     
- "Nodo4_0"->"Nodo6_0"
- "Nodo4_0"->"Nodo6_0"[dir = back]
- "Nodo4_0"->"Nodo4_4"
- "Nodo4_0"->"Nodo4_4"[dir = back]
  "Nodo6_0"[label = "5", group="6"]                                                                                                                     
  "Nodo6_0"->"Nodo6_2"
  "Nodo6_0"->"Nodo6_2"[dir = back]
- {rank=same;"Nodo0_0";"Nodo4_0";"Nodo6_0"}
+ {rank=same;"Nodo0_0";"Nodo6_0"}
  "Nodo0_2"[label = "1", group="0"]                                                                                                                     
  "Nodo0_2"->"Nodo6_2"
  "Nodo0_2"->"Nodo6_2"[dir = back]
- "Nodo0_2"->"Nodo0_4"
- "Nodo0_2"->"Nodo0_4"[dir = back]
+ "Nodo0_2"->"Nodo0_6"
+ "Nodo0_2"->"Nodo0_6"[dir = back]
  "Nodo6_2"[label = "#9db9f0",  style = filled, fillcolor = "#9db9f0" group="6"]                                                                        
  "Nodo6_2"->"Nodo6_6"
  "Nodo6_2"->"Nodo6_6"[dir = back]
  {rank=same;"Nodo0_2";"Nodo6_2"}
- "Nodo0_4"[label = "3", group="0"]                                                                                                                     
- "Nodo0_4"->"Nodo4_4"
- "Nodo0_4"->"Nodo4_4"[dir = back]
- "Nodo0_4"->"Nodo0_6"
- "Nodo0_4"->"Nodo0_6"[dir = back]
- "Nodo4_4"[label = "#fdce80",  style = filled, fillcolor = "#fdce80" group="4"]                                                                        
- {rank=same;"Nodo0_4";"Nodo4_4"}
  "Nodo0_6"[label = "5", group="0"]                                                                                                                     
  "Nodo0_6"->"Nodo6_6"
  "Nodo0_6"->"Nodo6_6"[dir = back]

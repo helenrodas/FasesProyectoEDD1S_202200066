@@ -8,7 +8,7 @@ program main
   use listaImg_module
 
   implicit none
-  integer :: option,size, i,dpiAsInt,io,img_album
+  integer :: option,size, i,dpiAsInt,io,img_album,idCapa
   character(:), allocatable :: dpi, nombreCliente, password
   integer, dimension(:), allocatable :: capas
   character(len=:), allocatable :: recorrido,nombre_alb
@@ -142,7 +142,7 @@ program main
       case(2)
         call op_GenImagen()
       case(3)
-        print *, "Estado estructuras"
+        call op_estadoEstructuras()
       case(4)
         print *, "Agregar modificaciones"
       case(5)
@@ -368,15 +368,20 @@ program main
       
       select case(option)
       case(1)
-        ! usuarioTemp%avlTree%avlGraph()   
+        call usuarioTemp%avlTree%avlGraph()   
         print *, "Grafica AVL generada exitosamente "
       case(2)
-        ! call usuarioTemp%tree%graph("grafica_ABB")
+        call usuarioTemp%tree%graph("grafica_ABB")
         print *, "Grafica ABB generada exitosamente "
       case(3)
-        print *, "pendiente graficar listado de albumes "
+        call usuarioTemp%listaAlbums%print_dot()
+        print *, "Grafica listado Albums generada exitosamente "
       case(4)
-        print *, "pendiente graficar capas "
+        print *, "Ingrese el ID de la capa a mostrar: "
+        read*, idCapa
+        print *, "----------------------------------- "
+        call usuarioTemp%tree%GraphCapa(idCapa)
+        print *, "Grafica capa generada exitosamente "
       case(5)
         print *, "pendiente graficar ver imagen y arbol de capas "
       case(6)
@@ -507,8 +512,6 @@ subroutine readCapas()
   print*,"Archivo Capas leido exitosamente"
   
 end subroutine readCapas
-
-
 
 subroutine readImg()
   call json%initialize()
