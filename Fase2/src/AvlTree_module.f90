@@ -27,7 +27,7 @@ module avl_module
         procedure :: insertInABB
         procedure :: getABB
         procedure :: getABBInt
-        
+        procedure :: existeId
     end type avl
 
     contains
@@ -333,6 +333,20 @@ subroutine write_dot(code)
             nullify(result)
         end if
     end function getABBInt
+
+    function existeId(self, id) result(existe)
+        class(avl), intent(inout) :: self
+        integer, intent(in) :: id
+        type(Node_AVL), pointer :: node
+        logical :: existe  
+    
+        node => search1(self%root, id)
+        if (associated(node)) then
+            existe = .TRUE.
+        else
+            existe = .FALSE.
+        end if
+    end function existeId
     
     
     

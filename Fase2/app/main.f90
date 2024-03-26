@@ -8,7 +8,7 @@ program main
   use listaImg_module
 
   implicit none
-  integer :: option,size, i,dpiAsInt,io,img_album,idCapa
+  integer :: option,size, i,dpiAsInt,io,img_album,idCapa,idnuevaImg,cantidadCapas
   character(:), allocatable :: dpi, nombreCliente, password
   integer, dimension(:), allocatable :: capas
   character(len=:), allocatable :: recorrido,nombre_alb
@@ -16,6 +16,7 @@ program main
   character(len=100) :: filename,name
   character(len=:), allocatable :: amplitud_rec, amplitud_rec2
   integer, dimension(:), allocatable :: cadena_id, cadena_preorder, cadena_inorder, cadena_posorder,ordenCapas,amplitud_int
+  logical:: idEncontrado,capaEncontrada
   ! integer ::  j, id_capa, n_pixeles
   ! integer :: fila, columna
   ! character(:), allocatable :: color
@@ -144,9 +145,9 @@ program main
       case(3)
         call op_estadoEstructuras()
       case(4)
-        print *, "Agregar modificaciones"
+        call op_modificaciones()
       case(5)
-        print *, "Agregar modificaciones"
+        print *, "Reportes"
       case(6)
             exit
           case default
@@ -366,6 +367,64 @@ program main
           end select
         end do
   end subroutine op_estadoEstructuras
+
+  subroutine menu_modificaciones()
+    print *, " "
+    print *, "...................................."
+    print *, "      Modificaciones Imagenes       "
+    print *, "...................................."
+    print *, "1. Registrar Imagen"
+    print *, "2. Eliminar Imagen"
+    print *, "3. Salir"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_modificaciones
+
+  subroutine op_modificaciones()
+    integer :: option
+    do
+      call menu_modificaciones()
+      read(*, *) option
+      
+      select case(option)
+      case(1)
+        print*,"Ingrese el id de la imagen a agregar:"
+        read*, idnuevaImg
+        idEncontrado = usuarioTemp%avlTree%existeId(idnuevaImg)
+        if ( idEncontrado ) then
+          print*,"Error! el ID ya existe"
+        else
+          call usuarioTemp%avlTree%insert(idnuevaImg)
+          print*,"Ingrese cuantas capas tendra la nueva imagen:"
+          read*, cantidadCapas
+          print*,"---------------------------------------------"
+          if (allocated(ids_a_buscar)) deallocate(ids_a_buscar)
+          allocate(ids_a_buscar(cantidadCapas))  ! Tamaño del arreglo
+          ! Leer los IDs de capas ingresados por el usuario
+          do i = 1, cantidadCapas
+            capaEncontrada = .false.
+            do while (.not. capaEncontrada)
+              print *, "Ingrese el ID de la capa ", i, ": "
+              read *, id
+              call usuarioTemp%tree%existeIDABB(id,capaEncontrada)
+              if (.not. capaEncontrada) then
+                print *, "El ID ", id, " no existe. Por favor, intente de nuevo."
+              end if
+            end do
+          ids_a_buscar(i) = id
+          end do
+          call usuarioTemp%avlTree%insertInABB(idnuevaImg,ids_a_buscar)
+        end if
+
+      case(2)
+        print *, "Funcion eliminar pendiente... "
+      case(3)
+            exit
+          case default
+            print *, "Error!. Seleccione una opcion valida."
+          end select
+        end do
+  end subroutine op_modificaciones
 
   subroutine menu_admin()
     print *, "...................................."

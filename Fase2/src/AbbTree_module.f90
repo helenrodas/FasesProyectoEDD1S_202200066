@@ -24,10 +24,47 @@ module abb_m
         procedure :: buscarIdGraph
         procedure :: GraphCapa
         procedure :: recorrido_amplitud
+        procedure :: existeIDABB
         ! procedure :: insertarEnMatriz
     end type abb
 
 contains   
+
+
+subroutine existeIDABB(self, val, encontrado)
+    class(abb), intent(inout) :: self
+    integer, intent(in) :: val
+    logical, intent(out) :: encontrado
+    type(Node_t), pointer :: node
+
+    node => existeNodoID(self%root, val)
+    
+    if (associated(node)) then
+      encontrado = .true.
+    else
+      encontrado = .false.
+    end if
+
+    contains
+
+    recursive function existeNodoID(root, value) result(node)
+        type(Node_t), pointer :: root
+        integer, intent(in) :: value
+        type(Node_t), pointer :: node
+
+        if (associated(root)) then
+            if (root%value == value) then
+                node => root
+            else if (value < root%value) then
+                node => existeNodoID(root%left, value)
+            else
+                node => existeNodoID(root%right, value)
+            end if
+        else
+            node => null()
+        end if
+    end function existeNodoID
+end subroutine existeIDABB
 
 subroutine buscarId(self, val,fila,columa,color)
     class(abb), intent(inout) :: self
