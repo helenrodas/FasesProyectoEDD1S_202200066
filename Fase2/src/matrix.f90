@@ -450,6 +450,7 @@ end subroutine insert
         else
             print *,""
             print *, "La imagen fue generada exitosamente"
+            call execute_command_line('start '// trim("./matrix.png"))
         end if
     end subroutine graficar
     

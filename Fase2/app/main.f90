@@ -315,33 +315,6 @@ program main
 
   end subroutine recorridoCapa
 
-  subroutine pruebaMatriz()
-    
-    type(Node_t), pointer :: nodo
-    nodo => usuarioTemp%tree%root
-     
-
-
-!Esto ya lo puedo borrar al hacer la prueba de funcionamiento
-      ! print*, "--------Recorrido limitado--------"
-      ! cadena_preorder = usuarioTemp%tree%preorder(4)
-      ! print*, "Orden preorder"
-      ! print*, cadena_preorder
-
-
-      ! call usuarioTemp%tree%buscarIdGraph(cadena_preorder)
-
-      ! cadena_posorder = usuarioTemp%tree%posorder(4)
-      ! print*, "Orden posorder"
-      ! print*, cadena_posorder
-      ! ! call usuarioTemp%tree%buscarIdGraph(cadena_posorder)
-
-      ! cadena_inorder = usuarioTemp%tree%inorder(4)
-      ! print*, "Orden inorder"
-      ! print*, cadena_inorder
-      ! ! call usuarioTemp%tree%buscarIdGraph(cadena_id)
-
-  end subroutine pruebaMatriz
 
   subroutine menu_estadoEstructuras()
     print *, " "
@@ -371,10 +344,10 @@ program main
         call usuarioTemp%avlTree%avlGraph()   
         print *, "Grafica AVL generada exitosamente "
       case(2)
-        call usuarioTemp%tree%graph("grafica_ABB")
+        call usuarioTemp%tree%graph("graficaABB")
         print *, "Grafica ABB generada exitosamente "
       case(3)
-        call usuarioTemp%listaAlbums%print_dot()
+        call usuarioTemp%listaAlbums%almbumGraphic()
         print *, "Grafica listado Albums generada exitosamente "
       case(4)
         print *, "Ingrese el ID de la capa a mostrar: "

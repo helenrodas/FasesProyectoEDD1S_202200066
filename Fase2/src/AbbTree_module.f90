@@ -386,16 +386,16 @@ end subroutine insertRec
             end if
         end subroutine posordenRec
 
-    subroutine graph(self, filename)
+    subroutine graph(self,filename)
         class(abb), intent(in) :: self
-        character(len=*), intent(in) :: filename
+        character(len=*),intent(in) :: filename
         character(len=:), allocatable :: dotStructure
         character(len=:), allocatable :: createNodes
         character(len=:), allocatable :: linkNodes
         
         createNodes = ''
         linkNodes = ''
-
+        ! filename = "graficaABB"
         dotStructure = "digraph G{" // new_line('a')
         dotStructure = dotStructure // "node [shape=circle];" // new_line('a')
 
@@ -459,6 +459,7 @@ end subroutine insertRec
     
         ! Genera la imagen PNG
         call system("dot -Tpng "// trim(filename) // " -o " // png_filename)
+        call execute_command_line('start '// trim("./graficaABB.png"))
     end subroutine write_dot
 
     function get_address_memory(node) result(address)

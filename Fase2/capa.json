@@ -55,11 +55,21 @@
         ]
     },
     {
+        "id_capa":20,
+        "pixeles": [
+            {
+                "fila":3,
+                "columna": 7,
+                "color":"#8A4818"
+            }
+        ]
+    },
+    {
         "id_capa":5,
         "pixeles": [
             {
-                "fila":1,
-                "columna": 2,
+                "fila":3,
+                "columna": 7,
                 "color":"#8A4818"
             }
         ]

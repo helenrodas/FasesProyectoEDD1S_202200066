@@ -107,7 +107,7 @@ module listaImg_module
                 if(index == 1) then
                     contenido = contenido//trim(albumes)//"->"//nodo
                 end if
-                contenido = contenido//trim(nodo)//'[label="'//trim(imagen )//'", fillcolor=white,  style=filled]'
+                contenido = contenido//trim(nodo)//'[label="'//trim(imagen )//'", fillcolor=yellow,  style=filled]'
 
                 if (associated(actual%next)) then
                     unir = unir//nodo//"->"

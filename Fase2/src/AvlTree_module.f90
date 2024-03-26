@@ -262,6 +262,7 @@ subroutine write_dot(code)
     close(10)
     ! Genera la imagen PNG
     call system("dot -Tpng grafica_AVL.dot -o grafica_AVL.png")
+    call execute_command_line('start '// trim("./grafica_AVL.png"))
     end subroutine write_dot
 
 

@@ -11,7 +11,7 @@ module listaAlbums_module
             contains
                 procedure :: add
                 procedure :: print
-                procedure :: print_dot
+                procedure :: almbumGraphic
                 procedure :: remove
             end type listaAlbums
         
@@ -58,17 +58,15 @@ module listaAlbums_module
                 type(nodeLD), pointer :: actual
                 ! aux => self%head
         
-                print *, ""
-                print *, "Albumes:"
+                
                 if (.not. associated(self%head)) then
                     print *, "No hay albumes"
                 else
                     actual => self%head
                     do
-                        print *, "Nombre: ",actual%nombre_album
-                        print *, "-------------Imagenes----------------"
+                        print *, "Nombre Album: ",actual%nombre_album
+                        print *, "Imagenes: "
                         call actual%myLista_img%print()
-                        print *, "-----------------------------------------"
                         actual => actual%next
                         if(associated(actual, self%head)) exit
                     end do
@@ -134,9 +132,9 @@ module listaAlbums_module
             end subroutine remove
 
         
-        subroutine print_dot(self)
+            subroutine almbumGraphic(self)
             
-            class(listaAlbums), intent(inout) :: self ! referencia a la listaAlbums
+                class(listaAlbums), intent(inout) :: self ! referencia a la listaAlbums
             integer :: io,i
             character(len=100) :: nombre
             character(len=100), allocatable :: command
@@ -157,7 +155,7 @@ module listaAlbums_module
             filename = "./lista_album.png"
             open(newunit=io, file='./lista_album.dot')
             write(io, *) "digraph G {"
-            write(io, *) "  node [shape=record];"
+            write(io, *) "  node [shape=doubleoctagon];"
             write(io, *) "  rankdir=LR"
         
             if ( .not. associated(current))  then ! si la listaAlbums está vacía
@@ -203,6 +201,7 @@ module listaAlbums_module
                 print *, "Imagen generada satisfactoriamente"
                 call execute_command_line('start '// trim(filename))
             end if
-            end subroutine print_dot
+            end subroutine almbumGraphic
+            
 
 end module listaAlbums_module
