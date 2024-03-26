@@ -449,7 +449,7 @@ program main
       
       select case(option)
       case(1)
-        print *, "Top 5 imagenes con mas numero de capas "
+        call usuarioTemp%avlTree%top5_imagenes()
       case(2)
         call usuarioTemp%tree%print_capaHoja()
       case(3)

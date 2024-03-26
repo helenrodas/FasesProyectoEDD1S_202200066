@@ -28,6 +28,7 @@ module abb_m
         procedure :: print_profundidadCapas
         procedure :: print_capaHoja
         procedure :: contarNodosEnArbol
+        procedure :: numero_nodos
     end type abb
 
 contains   
@@ -602,5 +603,22 @@ subroutine contarNodosEnArbol(self, totalNodos)
     totalNodos = contarNodos(self%root)
 end subroutine contarNodosEnArbol
 
+
+
+function numero_nodos(self) result(num_nodos)
+    class(abb), intent(in) :: self
+    integer :: num_nodos
+    num_nodos = contar_nodos(self%root)
+end function numero_nodos
+
+recursive function contar_nodos(root) result(num_nodos)
+    type(Node_t), pointer, intent(in) :: root
+    integer :: num_nodos
+    if (.not. associated(root)) then
+        num_nodos = 0
+    else
+        num_nodos = 1 + contar_nodos(root%left) + contar_nodos(root%right)
+    end if
+end function contar_nodos
 
 end module abb_m
