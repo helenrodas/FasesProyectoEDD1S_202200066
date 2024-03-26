@@ -8,7 +8,7 @@ program main
   use listaImg_module
 
   implicit none
-  integer :: option,size, i,dpiAsInt,io,img_album,idCapa,idnuevaImg,cantidadCapas
+  integer :: option,size, i,dpiAsInt,io,img_album,idCapa,idnuevaImg,cantidadCapas,numNodos
   character(:), allocatable :: dpi, nombreCliente, password
   integer, dimension(:), allocatable :: capas
   character(len=:), allocatable :: recorrido,nombre_alb
@@ -33,7 +33,6 @@ program main
   
 
   type(BTree), pointer :: root => null()
-  ! type(abb) :: tree
   type(abb) :: arbolTemp
   type(usuario) :: usuarioTemp
   type(matrix) :: m
@@ -313,7 +312,6 @@ program main
 
   end subroutine recorridoCapa
 
-
   subroutine menu_estadoEstructuras()
     print *, " "
     print *, "...................................."
@@ -455,9 +453,21 @@ program main
       case(2)
         call usuarioTemp%tree%print_capaHoja()
       case(3)
-        call usuarioTemp%tree%imprimir_profundidad()
+        call usuarioTemp%tree%print_profundidadCapas()
       case(4)
-        print *, "Listar las capas en: preorden, inorden, postorden "
+        call usuarioTemp%tree%contarNodosEnArbol(numNodos)
+        cadena_preorder = usuarioTemp%tree%preorder(numNodos)
+        print*,"------------------------------"
+        print*, "Ordenamiento Preorder"
+        print*, cadena_preorder
+        cadena_inorder = usuarioTemp%tree%inorder(numNodos)
+        print*,"------------------------------"
+        print*, "Ordenamiento Inorder"
+        print*, cadena_inorder
+        cadena_posorder = usuarioTemp%tree%posorder(numNodos)
+        print*,"------------------------------"
+        print*, "Ordenamiento Posorder"
+        print*, cadena_posorder
       case(5)
             exit
           case default

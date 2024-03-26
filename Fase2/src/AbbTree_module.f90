@@ -25,8 +25,9 @@ module abb_m
         procedure :: GraphCapa
         procedure :: recorrido_amplitud
         procedure :: existeIDABB
-        procedure :: imprimir_profundidad
+        procedure :: print_profundidadCapas
         procedure :: print_capaHoja
+        procedure :: contarNodosEnArbol
     end type abb
 
 contains   
@@ -242,46 +243,6 @@ recursive subroutine insertRec(root, val)
         end if
     end if
 end subroutine insertRec
-
-
- !Subrutinas del tipo abb
-    ! subroutine insert(self, val)
-    !     class(abb), intent(inout) :: self
-    !     integer, intent(in) :: val
-
-    !     if (.not. associated(self%root)) then
-    !         allocate(self%root)
-    !         self%root%value = val
-    !         allocate(self%root%matriz_temp)  ! Inicializa la matriz aquí
-    !     else
-    !         call insertRec(self%root, val)
-    !     end if
-    ! end subroutine insert
-    ! recursive subroutine insertRec(root, val)
-    !     type(Node_t), pointer, intent(inout) :: root
-    !     integer, intent(in) :: val
-        
-    !     if (val < root%value) then
-    !         if (.not. associated(root%left)) then
-    !             allocate(root%left)
-    !             root%left%value = val
-    !             allocate(root%left%matriz_temp)
-                
-    !         else
-    !             call insertRec(root%left, val)
-    !         end if
-    !     else if (val > root%value) then
-    !         if (.not. associated(root%right)) then
-    !             allocate(root%right)
-    !             root%right%value = val
-    !             allocate(root%right%matriz_temp)
-    !         else
-    !             call insertRec(root%right, val)
-    !         end if
-    !     end if
-    ! end subroutine insertRec
-
-
 
     subroutine delete(self, val)
         class(abb), intent(inout) :: self
@@ -560,7 +521,7 @@ end subroutine insertRec
     end if
 end function altura
 
-subroutine imprimir_profundidad(self)
+subroutine print_profundidadCapas(self)
     class(abb), intent(inout) :: self
     
     integer :: profundidad
@@ -568,7 +529,7 @@ subroutine imprimir_profundidad(self)
     profundidad = depth(self%root)
     print *, "-----------------------------------------"
     print *, 'La profundidad de arbol de capas es: ', profundidad
-end subroutine imprimir_profundidad
+end subroutine print_profundidadCapas
 
 
 
@@ -622,5 +583,24 @@ recursive subroutine imprimir_hoja_recursivo(root)
         end if
     end if
 end subroutine imprimir_hoja_recursivo
+
+recursive function contarNodos(root) result(n)
+    type(Node_t), pointer :: root
+    integer :: n
+
+    if (.not. associated(root)) then
+        n = 0
+    else
+        n = 1 + contarNodos(root%left) + contarNodos(root%right)
+    end if
+end function contarNodos
+
+subroutine contarNodosEnArbol(self, totalNodos)
+    class(abb), intent(inout) :: self
+    integer, intent(out) :: totalNodos
+
+    totalNodos = contarNodos(self%root)
+end subroutine contarNodosEnArbol
+
 
 end module abb_m
