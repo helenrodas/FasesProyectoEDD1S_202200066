@@ -25,7 +25,8 @@ module abb_m
         procedure :: GraphCapa
         procedure :: recorrido_amplitud
         procedure :: existeIDABB
-        ! procedure :: insertarEnMatriz
+        procedure :: imprimir_profundidad
+        procedure :: print_capaHoja
     end type abb
 
 contains   
@@ -559,8 +560,67 @@ end subroutine insertRec
     end if
 end function altura
 
+subroutine imprimir_profundidad(self)
+    class(abb), intent(inout) :: self
+    
+    integer :: profundidad
+
+    profundidad = depth(self%root)
+    print *, "-----------------------------------------"
+    print *, 'La profundidad de arbol de capas es: ', profundidad
+end subroutine imprimir_profundidad
 
 
 
+recursive function depth(root) result(d)
+type(Node_t), pointer, intent(in) :: root
+integer :: d
+integer :: left_depth, right_depth
+
+if (.not. associated(root)) then
+    d = 0
+else
+    left_depth = depth(root%left)
+    right_depth = depth(root%right)
+    d = max(left_depth, right_depth) + 1
+end if
+end function depth
+
+
+subroutine capas_hojas(self)
+    class(abb), intent(inout) :: self
+    call capas_hojasRec(self%root)
+
+end subroutine capas_hojas
+
+recursive subroutine capas_hojasRec(root)
+    type(Node_t), pointer, intent(in) :: root
+    if(associated(root)) then
+        if(.not. associated(root%left) .and. .not. associated(root%right)) then
+            print *, "La hoja es: ", root%value
+        end if
+        call capas_hojasRec(root%left)
+        call capas_hojasRec(root%right)
+    end if
+end subroutine capas_hojasRec
+
+subroutine print_capaHoja(self)
+    class(abb), intent(in) :: self
+    print *, "--------------------"
+    print *, "Capas que son hojas:"
+    call imprimir_hoja_recursivo(self%root)
+end subroutine print_capaHoja
+
+recursive subroutine imprimir_hoja_recursivo(root)
+    type(Node_t), pointer, intent(in) :: root
+    if (associated(root)) then
+        if (.not. associated(root%left) .and. .not. associated(root%right)) then
+            print *, root%value
+        else
+            call imprimir_hoja_recursivo(root%left)
+            call imprimir_hoja_recursivo(root%right)
+        end if
+    end if
+end subroutine imprimir_hoja_recursivo
 
 end module abb_m

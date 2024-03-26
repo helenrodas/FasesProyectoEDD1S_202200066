@@ -108,9 +108,6 @@ program main
         usuarioTemp%password = password
 
         call op_menuUsuario()
-
-        ! print *, "----Pruebas Matriz y arbol ABB----"
-        ! call pruebaMatriz()
         
     end if
   end subroutine inicio_sesion
@@ -125,7 +122,7 @@ program main
     print *, "3. Ver estado de las estructuras"
     print *, "4. Agregar Modificaciones"
     print *, "5. Reportes"
-    print *, "6. Cerrar Sesion" !Esta pendiente para cerrar sesion pero guardar los datos de usuario
+    print *, "6. Cerrar Sesion" !Esta pendiente para cerrar sesion y guardar los datos de usuario
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_usuario
@@ -147,7 +144,7 @@ program main
       case(4)
         call op_modificaciones()
       case(5)
-        print *, "Reportes"
+        call op_reportes()
       case(6)
             exit
           case default
@@ -388,7 +385,20 @@ program main
       
       select case(option)
       case(1)
-        print*,"Ingrese el id de la imagen a agregar:"
+        call registrarImg()
+      case(2)
+        print *, "Funcion eliminar pendiente... "
+      case(3)
+            exit
+          case default
+            print *, "Error!. Seleccione una opcion valida."
+          end select
+        end do
+  end subroutine op_modificaciones
+
+  subroutine registrarImg()
+
+    print*,"Ingrese el id de la imagen a agregar:"
         read*, idnuevaImg
         idEncontrado = usuarioTemp%avlTree%existeId(idnuevaImg)
         if ( idEncontrado ) then
@@ -416,15 +426,47 @@ program main
           call usuarioTemp%avlTree%insertInABB(idnuevaImg,ids_a_buscar)
         end if
 
+  end subroutine registrarImg
+
+
+  subroutine menu_reportes()
+    print *, " "
+    print *, "...................................."
+    print *, "          Reportes Usuario          "
+    print *, "...................................."
+    print *, "1. Top 5 imagenes con mas numero de capas"
+    print *, "2. Todas las capas que son hojas"
+    print *, "3. Profundidad de arbol de capas"
+    print *, "4. Listar las capas en: preorden, inorden, postorden"
+    print *, "5. Salir"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_reportes
+
+  subroutine op_reportes()
+    integer :: option
+    do
+      call menu_reportes()
+      read(*, *) option
+      
+      select case(option)
+      case(1)
+        print *, "Top 5 imagenes con mas numero de capas "
       case(2)
-        print *, "Funcion eliminar pendiente... "
+        call usuarioTemp%tree%print_capaHoja()
       case(3)
+        call usuarioTemp%tree%imprimir_profundidad()
+      case(4)
+        print *, "Listar las capas en: preorden, inorden, postorden "
+      case(5)
             exit
           case default
             print *, "Error!. Seleccione una opcion valida."
           end select
         end do
-  end subroutine op_modificaciones
+  end subroutine op_reportes
+
+
 
   subroutine menu_admin()
     print *, "...................................."
@@ -573,7 +615,6 @@ subroutine readImg()
       deallocate(capas)
   end do
 
- 
   print*," "
   print*,"Archivo Imagenes leido exitosamente"
   call json%destroy()
@@ -602,14 +643,11 @@ subroutine readAlbum()
           call ImagenesList%push(img_album)
       end do
       call usuarioTemp%listaAlbums%add(name,ImagenesList)
-      ! print*, "Nombre Album: ", nombre_alb, " img: ", img_album
       deallocate(ImagenesList)
-      ! call usuarioTemp%listaAlbums%push(nombre_alb)
   end do
   call usuarioTemp%listaAlbums%print()
   call json%destroy()
 end subroutine readAlbum
-
 
 end program main
 

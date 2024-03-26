@@ -8,7 +8,7 @@ module listaImg_module
             procedure :: push
             procedure :: print
             procedure :: delete_by_position
-            procedure :: grafica_listita
+            procedure :: grafica_listaImg
         end type listaImagenes
     
         type,public :: nodeLS
@@ -83,7 +83,7 @@ module listaImg_module
         end subroutine print
 
 
-        subroutine grafica_listita(self, contenido, albumes, name_)
+        subroutine grafica_listaImg(self, contenido, albumes, name_)
             class(listaImagenes), intent(in) :: self
             character(:), allocatable :: contenido, unir, nodo
             character(len=30), intent(in) :: albumes, name_
@@ -122,6 +122,6 @@ module listaImg_module
 
             contenido = contenido//unir
             
-        end subroutine grafica_listita
+        end subroutine grafica_listaImg
 
     end module listaImg_module

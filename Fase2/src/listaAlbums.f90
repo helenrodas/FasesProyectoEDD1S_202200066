@@ -173,7 +173,7 @@ module listaAlbums_module
                 ! escribir las aristas
                     
 
-                    call current%myLista_img%grafica_listita(contenido,nodoA,nombre)
+                    call current%myLista_img%grafica_listaImg(contenido,nodoA,nombre)
                     write(io, *) contenido
 
                     write(io, *) '  "nodeLD'// trim(current%prev%nombre_album)// &
