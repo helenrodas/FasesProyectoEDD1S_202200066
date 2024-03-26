@@ -23,7 +23,7 @@ module avl_module
         contains
         procedure :: newTree
         procedure :: insert
-        procedure :: generateGraph
+        procedure :: avlGraph
         procedure :: insertInABB
         procedure :: getABB
         procedure :: getABBInt
@@ -186,7 +186,7 @@ module avl_module
 
 
 
-    subroutine GenerateGraph(this)
+    subroutine avlGraph(this)
     class(avl), intent(inout) :: this
     character(len=:), allocatable :: dotStructure
     character(len=:), allocatable :: createNodes
@@ -205,7 +205,7 @@ module avl_module
     dotStructure = dotStructure // trim(createNodes) // trim(linkNodes) // "}" // new_line('a')
     call write_dot(dotStructure)
     print *, "Archivo actualizado existosamente."
-end subroutine GenerateGraph
+end subroutine avlGraph
 
 recursive subroutine RoamTree(actual, createNodes, linkNodes)
     type(Node_AVL), pointer :: actual
@@ -257,11 +257,11 @@ end subroutine RoamTree
 
 subroutine write_dot(code)
     character(len=*), intent(in) :: code
-    open(10, file='graph.dot', status='replace', action='write')
+    open(10, file='grafica_AVL.dot', status='replace', action='write')
     write(10, '(A)') trim(code)
     close(10)
     ! Genera la imagen PNG
-    call system("dot -Tpng graph.dot -o grafo.png")
+    call system("dot -Tpng grafica_AVL.dot -o grafica_AVL.png")
     end subroutine write_dot
 
 

@@ -4,7 +4,7 @@
         "name": "Run GDB",
         "type": "cppdbg",
         "request": "launch",
-        "program": "C:/Programacion/PracticasFortran/QuintoSemestre/ProyectoEDD/Fase2/app/main.exe", // Path to the executable
+        "program": "C:/Programacion/PracticasFortran/QuintoSemestre/ProyectoEDD/Fase2/app/Fase2.exe", // Path to the executable
         "args": [],
         "stopAtEntry": false,
         "cwd": "C:/Programacion/PracticasFortran/QuintoSemestre/ProyectoEDD/Fase2/app", // Working directory
