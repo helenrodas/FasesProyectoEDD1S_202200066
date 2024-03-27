@@ -6,6 +6,7 @@ program main
   use avl_module
   use listaAlbums_module
   use listaImg_module
+  use linkedList_module
 
   implicit none
   integer :: option,size, i,dpiAsInt,io,img_album,idCapa,idnuevaImg,cantidadCapas,numNodos
@@ -16,25 +17,27 @@ program main
   character(len=100) :: filename,name
   character(len=:), allocatable :: amplitud_rec, amplitud_rec2
   integer, dimension(:), allocatable :: cadena_id, cadena_preorder, cadena_inorder, cadena_posorder,ordenCapas,amplitud_int
-  logical:: idEncontrado,capaEncontrada
+  logical:: idEncontrado,capaEncontrada,usuarioExiste
   ! integer ::  j, id_capa, n_pixeles
   ! integer :: fila, columna
   ! character(:), allocatable :: color
   
     !Declaracion de un objeto de tipo ususario para ejemplo
-    type :: usuario
-      integer*8 :: dpi
-      ! character(:), allocatable :: nombre,password
-      character(len=100) :: nombre,password
-      type(abb) :: tree
-      type(avl) :: avlTree
-      type(listaAlbums) :: listaAlbums
-    end type usuario
+    ! type :: usuario
+    !   integer*8 :: dpi
+    !   ! character(:), allocatable :: nombre,password
+    !   character(len=100) :: nombre,password
+    !   type(abb) :: tree
+    !   type(avl) :: avlTree
+    !   type(listaAlbums) :: listaAlbums
+    ! end type usuario
   
 
+  type(nodeUser), pointer :: usuarioTemp
+  type(listaUser) :: listaU
   type(BTree), pointer :: root => null()
   type(abb) :: arbolTemp
-  type(usuario) :: usuarioTemp
+  ! type(usuario) :: usuarioTemp
   type(matrix) :: m
   type(json_file) :: json
   type(json_core) :: jsonc
@@ -87,7 +90,7 @@ program main
     integer*8 :: dpiAsInt
     print *, "--------------------"
     print *, "Ingrese su usuario: "
-    read*, usuario
+    read(*,'(A)') usuario
     
     print *, "Ingrese su password: "
     read*, password
@@ -95,18 +98,24 @@ program main
     print *, "Ingrese su dpi: "
     read*, dpi
 
-    usuario = trim(usuario)
+    ! usuario = trim(usuario)
     password = trim(password)
     
     if (usuario == "admin" .and. password == "EDD2024") then
         call op_menuAdmin()
     else
         read(dpi, *) dpiAsInt
-        usuarioTemp%dpi = dpiAsInt
-        usuarioTemp%nombre = usuario
-        usuarioTemp%password = password
+        ! usuarioTemp%dpi = dpiAsInt
+        ! usuarioTemp%nombre = usuario
+        ! usuarioTemp%password = password
 
-        call op_menuUsuario()
+        call listaU%buscarUsuario(usuario,password,usuarioExiste,usuarioTemp)
+        if(usuarioExiste) then
+          call op_menuUsuario()
+        else 
+          print*, "Usuario no encontrado!"
+        end if
+        ! call op_menuUsuario()
         
     end if
   end subroutine inicio_sesion
@@ -509,7 +518,7 @@ program main
             print *, "Error!. Seleccione una opcion valida."
           end select
         end do
-  end subroutine
+  end subroutine op_menuAdmin
 
   subroutine registro_usuarios()
     
@@ -549,12 +558,14 @@ program main
 
         read(dpi, *) dpiAsInt
         call insert(root,dpiAsInt,nombreCliente,password)
+        call listaU%push(dpiAsInt,nombreCliente,password)
         
       ! print *, "DPI: ", dpi
       ! print *, "nombre_cliente: ", nombreCliente
       ! print *, "Contrasena: ", password
     end do
     call inorder(root)
+    ! call listaU%print()
     call json%destroy()
 end subroutine readUsuarios
 
@@ -617,11 +628,9 @@ subroutine readImg()
           call jsonc%get_child(atributoPunteroCapa, contador_pixel, punteroPixel, capa_encontrada)
           call jsonc%get(punteroPixel, capas(contador_pixel))
       end do
-
       print*, "ID: ", id, "Capas: ", capas
       
       call usuarioTemp%avlTree%insertInABB(id,capas)
-      
       deallocate(capas)
   end do
 
