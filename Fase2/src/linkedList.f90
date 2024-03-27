@@ -12,6 +12,7 @@ module linkedList_module
             procedure :: print
             procedure :: delete_by_position
             procedure :: buscarUsuario
+            procedure :: existeUsuario
             ! procedure :: grafica_listaImg
         end type listaUser
     
@@ -120,6 +121,26 @@ module linkedList_module
                 end if
             end do
         end subroutine buscarUsuario
+
+        subroutine existeUsuario(self, nombreUsuario, passwordUsuario, encontrado)
+            class(listaUser), intent(inout) :: self
+            character(len=*), intent(in) :: nombreUsuario, passwordUsuario
+            logical, intent(out) :: encontrado
+        
+            type(nodeUser), pointer :: current
+        
+            current => self%head
+            encontrado = .false.
+        
+            do while (associated(current))
+                if (trim(current%nombre) == trim(nombreUsuario) .and. trim(current%password) == trim(passwordUsuario)) then
+                    encontrado = .true.
+                    exit
+                else
+                    current => current%next
+                end if
+            end do
+        end subroutine existeUsuario
         
 
     end module linkedList_module

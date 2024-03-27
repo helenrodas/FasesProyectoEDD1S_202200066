@@ -60,7 +60,7 @@ program main
     case(1)
       call inicio_sesion()
     case(2)
-      call registro_usuarios()
+      call nuevo_usuario()
     case(3)
       exit
     case default
@@ -119,6 +119,39 @@ program main
         
     end if
   end subroutine inicio_sesion
+
+  subroutine nuevo_usuario()
+    character(len=100) :: usuario, password,dpi
+    
+    integer*8 :: dpiAsInt
+    print *, "--------------------"
+    print *, "Ingrese el nuevo usuario: "
+    read(*,'(A)') usuario
+    
+    print *, "Ingrese su password: "
+    read*, password
+
+    print *, "Ingrese su dpi: "
+    read*, dpi
+
+    password = trim(password)
+    
+    read(dpi, *) dpiAsInt
+
+    call listaU%existeUsuario(usuario,password,usuarioExiste)
+    if(usuarioExiste) then
+      print*, "El usuario ya existe!"
+    else 
+      call insert(root,dpiAsInt,usuario,password)
+      call listaU%push(dpiAsInt,usuario,password)
+      print*,"print desde arbol b"
+      call inorder(root)
+      print*,"print desde lista"
+      call listaU%print()
+      print*, "Usuario agregado!"
+    end if
+    ! call op_menuUsuario()
+  end subroutine nuevo_usuario
 
   subroutine menu_usuario()
     print *, " "
@@ -520,19 +553,6 @@ program main
         end do
   end subroutine op_menuAdmin
 
-  subroutine registro_usuarios()
-    
-    character(len=100) :: nombre,dpi,contrasena
-    print *, "----------------------=---------"
-    print *, "Ingrese su nombre completo: "
-    read*, nombre
-    print *, "Ingrese su DPI: "
-    read*, dpi
-    print *, "Ingrese su password: "
-    read*, contrasena
-    print *, "Usuario registrado exitosamente!"
-    print *, "--------------------------------"
-  end subroutine registro_usuarios
 
   subroutine readUsuarios()
     integer*8 :: dpiAsInt
