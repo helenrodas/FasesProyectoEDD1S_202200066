@@ -13,6 +13,7 @@ module linkedList_module
             procedure :: delete_by_position
             procedure :: buscarUsuario
             procedure :: existeUsuario
+            procedure :: actualizarUsuario
             ! procedure :: grafica_listaImg
         end type listaUser
     
@@ -141,6 +142,28 @@ module linkedList_module
                 end if
             end do
         end subroutine existeUsuario
+        
+
+        subroutine actualizarUsuario(self, dpi, nuevoNombre, nuevaPassword)
+            class(listaUser), intent(inout) :: self
+            integer*8, intent(in) :: dpi
+            character(len=*), intent(in) :: nuevoNombre, nuevaPassword
+            type(nodeUser), pointer :: current
+        
+            current => self%head
+        
+            do while (associated(current))
+                if (current%dpi == dpi) then
+                    current%nombre = nuevoNombre
+                    current%password = nuevaPassword
+                    print *, "Usuario actualizado exitosamente."
+                    return
+                end if
+                current => current%next
+            end do
+        
+            print *, "Usuario no encontrado."
+        end subroutine actualizarUsuario
         
 
     end module linkedList_module

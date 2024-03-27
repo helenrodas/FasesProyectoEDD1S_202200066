@@ -142,11 +142,11 @@ program main
     if(usuarioExiste) then
       print*, "El usuario ya existe!"
     else 
-      call insert(root,dpiAsInt,usuario,password)
+      ! call insert(root,dpiAsInt,usuario,password)  este metodo es para el arbol b
       call listaU%push(dpiAsInt,usuario,password)
-      print*,"print desde arbol b"
-      call inorder(root)
-      print*,"print desde lista"
+      ! print*,"print desde arbol b"
+      ! call inorder(root)
+      ! print*,"print desde lista"
       call listaU%print()
       print*, "Usuario agregado!"
     end if
@@ -542,7 +542,7 @@ program main
       case(1)
         print*, "Aqui se va a generar la grafica Arbol B"
       case(2)
-        print *, "Operaciones con usuarios..."
+        call op_operacionesUsuarios()
       case(3)
         call readUsuarios()
       case(4)
@@ -553,6 +553,56 @@ program main
         end do
   end subroutine op_menuAdmin
 
+  subroutine menu_operacionesUsuarios()
+    print *, "...................................."
+    print *, "     Operaciones sobre usuarios     "
+    print *, "...................................."
+    print *, "1. Insertar"
+    print *, "2. Modificar"
+    print *, "3. Eliminar"
+    print *, "4. Cerrar Sesion"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_operacionesUsuarios
+
+  subroutine op_operacionesUsuarios()
+    integer :: option
+    do
+      call menu_operacionesUsuarios()
+      read(*, *) option
+      
+      select case(option)
+      case(1)
+        call nuevo_usuario()
+      case(2)
+        call modificarUsuario()
+      case(3)
+        print *, "menu eliminar"
+      case(4)
+            exit
+          case default
+            print *, "Error!. Seleccione una opcion valida."
+          end select
+        end do
+  end subroutine op_operacionesUsuarios
+
+  subroutine modificarUsuario()
+    character(len=100) :: usuario, password,dpi
+    integer*8 :: dpiAsInt
+    print *, "--------------------"
+    print *, "Ingrese su dpi: "
+    read*, dpi
+    print *, "Ingrese su nuevo usuario: "
+    read(*,'(A)') usuario
+    
+    print *, "Ingrese su nuevo password: "
+    read*, password
+
+    read(dpi, *) dpiAsInt
+    call listaU%actualizarUsuario(dpiAsInt,usuario,password)
+    call listaU%print()
+    
+  end subroutine modificarUsuario
 
   subroutine readUsuarios()
     integer*8 :: dpiAsInt
@@ -577,15 +627,15 @@ program main
         call jsonc%get(attributePointer, password)
 
         read(dpi, *) dpiAsInt
-        call insert(root,dpiAsInt,nombreCliente,password)
+        ! call insert(root,dpiAsInt,nombreCliente,password)
         call listaU%push(dpiAsInt,nombreCliente,password)
         
       ! print *, "DPI: ", dpi
       ! print *, "nombre_cliente: ", nombreCliente
       ! print *, "Contrasena: ", password
     end do
-    call inorder(root)
-    ! call listaU%print()
+    ! call inorder(root)
+    call listaU%print()
     call json%destroy()
 end subroutine readUsuarios
 
