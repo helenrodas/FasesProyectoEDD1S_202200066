@@ -577,7 +577,7 @@ program main
       case(2)
         call modificarUsuario()
       case(3)
-        print *, "menu eliminar"
+        call borrarUsuario()
       case(4)
             exit
           case default
@@ -603,6 +603,19 @@ program main
     call listaU%print()
     
   end subroutine modificarUsuario
+
+  subroutine borrarUsuario()
+    character(len=100) :: usuario, password,dpi
+    integer*8 :: dpiAsInt
+    print *, "--------------------"
+    print *, "Ingrese el dpi del usuario a eliminar: "
+    read*, dpi
+
+    read(dpi, *) dpiAsInt
+    call listaU%eliminarUsuario(dpiAsInt)
+    call listaU%print()
+    
+  end subroutine borrarUsuario
 
   subroutine readUsuarios()
     integer*8 :: dpiAsInt

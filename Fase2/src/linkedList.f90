@@ -14,6 +14,7 @@ module linkedList_module
             procedure :: buscarUsuario
             procedure :: existeUsuario
             procedure :: actualizarUsuario
+            procedure :: eliminarUsuario
             ! procedure :: grafica_listaImg
         end type listaUser
     
@@ -165,5 +166,35 @@ module linkedList_module
             print *, "Usuario no encontrado."
         end subroutine actualizarUsuario
         
+        subroutine eliminarUsuario(self, dpi)
+            class(listaUser), intent(inout) :: self
+            integer*8, intent(in) :: dpi
+            type(nodeUser), pointer :: current, previous
+            logical :: encontrado
+        
+            current => self%head
+            previous => null()
+            encontrado = .false.
+        
+            do while (associated(current) .and. .not. encontrado)
+                if (current%dpi == dpi) then
+                    encontrado = .true.
+                    if (associated(previous)) then
+                        previous%next => current%next
+                    else
+                        self%head => current%next
+                    end if
+                    deallocate(current)
+                    print *, 'Usuario eliminado!'
+                else
+                    previous => current
+                    current => current%next
+                end if
+            end do
+        
+            if (.not. encontrado) then
+                print *, 'Usuario no encontrado.'
+            end if
+        end subroutine eliminarUsuario
 
     end module linkedList_module
