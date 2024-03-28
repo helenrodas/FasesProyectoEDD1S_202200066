@@ -24,7 +24,6 @@ program main
   type(listaUser) :: listaU
   type(BTree), pointer :: root => null()
   type(abb) :: arbolTemp
-  ! type(usuario) :: usuarioTemp
   type(matrix) :: m
   type(json_file) :: json
   type(json_core) :: jsonc
@@ -70,7 +69,7 @@ program main
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_inicial
 
-  !Opcion inicio de sesion como usuario normal
+  !Opcion inicio de sesion
   subroutine inicio_sesion()
     character(len=100) :: usuario, password,dpi
     
@@ -82,27 +81,21 @@ program main
     print *, "Ingrese su password: "
     read*, password
 
-    print *, "Ingrese su dpi: "
-    read*, dpi
-
-    ! usuario = trim(usuario)
     password = trim(password)
     
     if (usuario == "admin" .and. password == "EDD2024") then
         call op_menuAdmin()
     else
+        print *, "Ingrese su dpi: "
+        read*, dpi
         read(dpi, *) dpiAsInt
-        ! usuarioTemp%dpi = dpiAsInt
-        ! usuarioTemp%nombre = usuario
-        ! usuarioTemp%password = password
 
-        call listaU%buscarUsuario(usuario,password,usuarioExiste,usuarioTemp)
+        call listaU%buscarUsuario(usuario,password,dpiAsInt,usuarioExiste,usuarioTemp)
         if(usuarioExiste) then
           call op_menuUsuario()
         else 
-          print*, "Usuario no encontrado!"
+          print*, "Usuario no encontrado..."
         end if
-        ! call op_menuUsuario()
         
     end if
   end subroutine inicio_sesion
@@ -532,7 +525,7 @@ program main
     print *, "1. Grafica Arbol B Usuarios"
     print *, "2. Operaciones sobre usuarios"
     print *, "3. Carga masiva de usuarios"
-    print *, "4. Reporte"
+    print *, "4. Reportes"
     print *, "5. Cerrar Sesion"
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
@@ -552,7 +545,7 @@ program main
       case(3)
         call readUsuarios()
       case(4)
-        call reporteUsuario()
+        call op_reportesAdmin()
     case(5)
             exit
           case default
@@ -625,6 +618,39 @@ program main
     
   end subroutine borrarUsuario
 
+
+  subroutine menu_reporteAdmin()
+    print *, "...................................."
+    print *, "     Reportes Administrador    "
+    print *, "...................................."
+    print *, "1. Buscar Cliente"
+    print *, "2. Listar Clientes"
+    print *, "3. Salir"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_reporteAdmin
+
+
+  subroutine op_reportesAdmin()
+    integer :: option
+    do
+      call menu_reporteAdmin()
+      read(*, *) option
+      
+      select case(option)
+      case(1)
+        call reporteUsuario()
+      case(2)
+        call listaU%print()
+      case(3)
+            exit
+          case default
+            print *, "Error!. Seleccione una opcion valida."
+          end select
+        end do
+  end subroutine op_reportesAdmin
+
+
   subroutine reporteUsuario()
     character(len=100) :: dpi
     integer*8 :: dpiAsInt
@@ -635,6 +661,7 @@ program main
     read(dpi, *) dpiAsInt
     call listaU%clienteABuscar(dpiAsInt)
   end subroutine reporteUsuario
+
 
   subroutine readUsuarios()
     integer*8 :: dpiAsInt
@@ -661,14 +688,12 @@ program main
         read(dpi, *) dpiAsInt
         ! call insert(root,dpiAsInt,nombreCliente,password)
         call listaU%push(dpiAsInt,nombreCliente,password)
-        
-      ! print *, "DPI: ", dpi
-      ! print *, "nombre_cliente: ", nombreCliente
-      ! print *, "Contrasena: ", password
+
     end do
     ! call inorder(root)
-    call listaU%print()
+    ! call listaU%print()
     call json%destroy()
+    print*,"Archivo usuarios leido exitosamente"
 end subroutine readUsuarios
 
 subroutine readCapas()
@@ -731,7 +756,7 @@ subroutine readImg()
           call jsonc%get_child(atributoPunteroCapa, contador_pixel, punteroPixel, capa_encontrada)
           call jsonc%get(punteroPixel, capas(contador_pixel))
       end do
-      print*, "ID: ", id, "Capas: ", capas
+      ! print*, "ID: ", id, "Capas: ", capas
       
       call usuarioTemp%avlTree%insertInABB(id,capas)
       deallocate(capas)
@@ -768,8 +793,9 @@ subroutine readAlbum()
       call usuarioTemp%listaAlbums%add(name,ImagenesList)
       deallocate(ImagenesList)
   end do
-  call usuarioTemp%listaAlbums%print()
+  ! call usuarioTemp%listaAlbums%print()
   call json%destroy()
+  print*,"Archivo albums leido exitosamente"
 end subroutine readAlbum
 
 end program main

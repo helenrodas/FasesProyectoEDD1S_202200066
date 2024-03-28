@@ -107,9 +107,10 @@ module linkedList_module
         end subroutine print
 
 
-        subroutine buscarUsuario(self, nombreUsuario, passwordUsuario, encontrado, user_node)
+        subroutine buscarUsuario(self, nombreUsuario, passwordUsuario,dpiInt ,encontrado, user_node)
             class(listaUser), intent(inout) :: self
             character(len=*), intent(in) :: nombreUsuario, passwordUsuario
+            integer*8::dpiInt
             logical, intent(out) :: encontrado
             type(nodeUser), pointer, intent(out) :: user_node
         
@@ -119,7 +120,8 @@ module linkedList_module
             encontrado = .false.
         
             do while (associated(current))
-                if (trim(current%nombre) == trim(nombreUsuario) .and. trim(current%password) == trim(passwordUsuario)) then
+                if (trim(current%nombre) == trim(nombreUsuario) .and. trim(current%password) == trim(passwordUsuario) &
+                    .and. (current%dpi) == dpiInt ) then
                     encontrado = .true.
                     user_node => current
                     exit
