@@ -18,20 +18,7 @@ program main
   character(len=:), allocatable :: amplitud_rec, amplitud_rec2
   integer, dimension(:), allocatable :: cadena_id, cadena_preorder, cadena_inorder, cadena_posorder,ordenCapas,amplitud_int
   logical:: idEncontrado,capaEncontrada,usuarioExiste
-  ! integer ::  j, id_capa, n_pixeles
-  ! integer :: fila, columna
-  ! character(:), allocatable :: color
-  
-    !Declaracion de un objeto de tipo ususario para ejemplo
-    ! type :: usuario
-    !   integer*8 :: dpi
-    !   ! character(:), allocatable :: nombre,password
-    !   character(len=100) :: nombre,password
-    !   type(abb) :: tree
-    !   type(avl) :: avlTree
-    !   type(listaAlbums) :: listaAlbums
-    ! end type usuario
-  
+
 
   type(nodeUser), pointer :: usuarioTemp
   type(listaUser) :: listaU
@@ -163,7 +150,7 @@ program main
     print *, "3. Ver estado de las estructuras"
     print *, "4. Agregar Modificaciones"
     print *, "5. Reportes"
-    print *, "6. Cerrar Sesion" !Esta pendiente para cerrar sesion y guardar los datos de usuario
+    print *, "6. Cerrar Sesion" 
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_usuario
@@ -394,7 +381,9 @@ program main
         call usuarioTemp%tree%GraphCapa(idCapa)
         print *, "Grafica capa generada exitosamente "
       case(5)
-        print *, "pendiente graficar ver imagen y arbol de capas "
+        print *, "Ingrese el ID de la imagen a mostrar: "
+        read*, idCapa
+        call usuarioTemp%avlTree%ABBAVLGraph(idCapa)
       case(6)
         print *, "pendiente graficar arbol de clientes "
       case(7)
@@ -579,7 +568,7 @@ program main
     print *, "1. Insertar"
     print *, "2. Modificar"
     print *, "3. Eliminar"
-    print *, "4. Cerrar Sesion"
+    print *, "4. Salir"
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_operacionesUsuarios

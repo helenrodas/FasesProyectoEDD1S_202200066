@@ -1,5 +1,6 @@
 module abb_m
     use matrix_m
+    use uuid_module
     implicit none
     private
 
@@ -29,6 +30,7 @@ module abb_m
         procedure :: print_capaHoja
         procedure :: contarNodosEnArbol
         procedure :: numero_nodos
+        procedure :: getContenido
     end type abb
 
 contains   
@@ -397,7 +399,7 @@ end subroutine insertRec
         linkNodes = ''
         ! filename = "graficaABB"
         dotStructure = "digraph G{" // new_line('a')
-        dotStructure = dotStructure // "node [shape=circle];" // new_line('a')
+        dotStructure = dotStructure // "node [shape=Mcircle];" // new_line('a')
 
         if (associated(self%root)) then
             call RoamTree(self%root, createNodes, linkNodes)
@@ -620,5 +622,50 @@ recursive function contar_nodos(root) result(num_nodos)
         num_nodos = 1 + contar_nodos(root%left) + contar_nodos(root%right)
     end if
 end function contar_nodos
+
+subroutine getContenido(self, contenido, nodoCapa)
+    class(abb), intent(in) :: self
+    character(len=:), allocatable :: contenido
+    character(len=20) :: nodoCapa
+    character(len=36) :: nombre
+
+        !Graficar
+    if(associated(self%root)) then
+        nombre = generate_uuid()
+        contenido = contenido//'"'//trim(nodocapa)//'"'//'->"Nodo'//nombre//'"'
+        !contenido = contenido//'subgraph cluster{label="Capas"'
+        call imprimirRec2(self%root, nombre, contenido)
+        !contenido = contenido//"}"
+    end if
+end subroutine getContenido
+
+
+recursive subroutine imprimirRec2(raiz, nombre, contenido)
+    type(Node_t), pointer, intent(in) :: raiz
+    character(len=36), intent(in) :: nombre
+    character(len=:), allocatable :: contenido
+
+    character(len=36) :: derecha
+    character(len=36) :: izquierda
+    character(len=36) :: idcapa
+
+    derecha = generate_uuid()
+    izquierda = generate_uuid()
+
+    if(associated(raiz)) then
+        write(idcapa, '(I0)') raiz%value
+        contenido = contenido//'"Nodo'//nombre//'"[label= "'//trim(idcapa)//'", shape ="box3d"]'
+
+        if(associated(raiz%left)) then
+            contenido = contenido//'"Nodo'//nombre//'"->"Nodo'//izquierda//'"'
+        end if
+
+        if(associated(raiz%right)) then
+            contenido = contenido//'"Nodo'//nombre//'"->"Nodo'//derecha//'"'
+        end if
+        call imprimirRec2(raiz%left, izquierda, contenido)
+        call imprimirRec2(raiz%right, derecha, contenido)
+    end if
+end subroutine imprimirRec2
 
 end module abb_m

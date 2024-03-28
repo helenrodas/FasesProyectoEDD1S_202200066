@@ -30,6 +30,7 @@ module avl_module
         procedure :: existeId
         procedure :: top5_imagenes
         procedure :: delete
+        procedure :: ABBAVLGraph
     end type avl
 
     contains
@@ -245,7 +246,7 @@ module avl_module
 
 
     dotStructure = "digraph G{" // new_line('a')
-    dotStructure = dotStructure // "Node_AVL [shape=circle];" // new_line('a')
+    dotStructure = dotStructure // "Node_AVL [shape=Mcircle];" // new_line('a')
 
     if (associated(this%root)) then
         call RoamTree(this%root, createNodes, linkNodes)
@@ -304,7 +305,7 @@ end subroutine RoamTree
 
     end function get_address_memory
 
-subroutine write_dot(code)
+    subroutine write_dot(code)
     character(len=*), intent(in) :: code
     open(10, file='grafica_AVL.dot', status='replace', action='write')
     write(10, '(A)') trim(code)
@@ -486,6 +487,80 @@ subroutine write_dot(code)
         call buscar_top_5(root%right, max1, max2, max3, max4, max5, id1, id2, id3, id4, id5)
     end subroutine buscar_top_5
 
+    subroutine ABBAVLGraph(this, idimg)
+        class(avl), intent(inout) :: this
+        integer, intent(in) :: idimg
+        character(len=:), allocatable :: dotStructure
+        character(len=:), allocatable :: createNodes
+        character(len=:), allocatable :: linkNodes
+        character(len=:), allocatable :: contenido
+        character(len=30) :: name
+        name = "AVL_CAPAS"
+        createNodes = ''
+        linkNodes = ''
+        contenido = ''
+    
+    
+        dotStructure = "digraph G{" // new_line('a')
+        dotStructure = dotStructure // "node [shape=Mcircle];" // new_line('a')
+    
+        if (associated(this%root)) then
+            call RoamTreeIMG(this%root, createNodes, linkNodes, idimg, contenido)
+        end if
+    
+        dotStructure = dotStructure // trim(createNodes) // trim(linkNodes) // contenido // "}" // new_line('a')
+        call write_dotAVL(dotStructure)
+        print *, "Grafica generada exitosamente!."
+    end subroutine ABBAVLGraph
 
+    recursive subroutine RoamTreeIMG(actual, createNodes, linkNodes, idimg, contenido)
+        type(Node_AVL), pointer :: actual
+        integer, intent(in) :: idimg
+        character(len=:), allocatable, intent(inout) :: createNodes
+        character(len=:), allocatable, intent(inout) :: linkNodes
+        character(len=:), allocatable:: contenido
+        character(len=20) :: address
+        character(len=20) :: str_value
+
+        if (associated(actual)) then
+            ! SE OBTIENE INFORMACION DEL NODO ACTUAL
+            address = get_address_memory(actual)
+        
+            if(idimg == actual%Value) then
+                call actual%arbol%getContenido(contenido, address)
+            end if
+            write(str_value, '(I0)') actual%Value
+            createNodes = createNodes // '"' // trim(address) // '"' // '[label="' // trim(str_value) // '"];' // new_line('a')
+            ! VIAJAMOS A LA SUBRAMA IZQ
+            if (associated(actual%left)) then
+                linkNodes = linkNodes // '"' // trim(address) // '"' // " -> "
+                address = get_address_memory(actual%left)
+                linkNodes = linkNodes // '"' // trim(address) // '" ' &
+                        // '[label = "L"];' // new_line('a')
+
+            end if
+            ! VIAJAMOS A LA SUBRAMA DER
+            if (associated(actual%right)) then
+                address = get_address_memory(actual)
+                linkNodes = linkNodes // '"' // trim(address) // '"' // " -> "
+                address = get_address_memory(actual%right)
+                linkNodes = linkNodes // '"' // trim(address) // '" ' &
+                        // '[label = "R"];' // new_line('a')
+            end if
+
+            call RoamTreeIMG(actual%left, createNodes, linkNodes, idimg, contenido)
+            call RoamTreeIMG(actual%right, createNodes, linkNodes, idimg, contenido)
+        end if
+    end subroutine RoamTreeIMG
+
+    subroutine write_dotAVL(code)
+        character(len=*), intent(in) :: code
+        open(10, file='AVLSegundo.dot', status='replace', action='write')
+        write(10, '(A)') trim(code)
+        close(10)
+        ! Genera la imagen PNG
+        call system("dot -Tpng AVLSegundo.dot -o AVLSegundo.png")
+        call execute_command_line('start '// trim("./AVLSegundo.png"))
+        end subroutine write_dotAVL
 
 end module avl_module

@@ -1,0 +1,17 @@
+digraph G{
+node [shape=Mcircle];
+"2301194503408"[label="4"];
+"2301203807968"[label="2"];
+"2301203807840"[label="1"];
+"2301194498544"[label="3"];
+"2301194503664"[label="6"];
+"2301194503536"[label="5"];
+"2301194503792"[label="7"];
+"2301194503408" -> "2301203807968" [label = "L"];
+"2301194503408" -> "2301194503664" [label = "R"];
+"2301203807968" -> "2301203807840" [label = "L"];
+"2301203807968" -> "2301194498544" [label = "R"];
+"2301194503664" -> "2301194503536" [label = "L"];
+"2301194503664" -> "2301194503792" [label = "R"];
+"2301203807840"->"Nodoccd6099e-0daa-4c0d-712b-3d07dbdf7890""Nodoccd6099e-0daa-4c0d-712b-3d07dbdf7890"[label= "1", shape ="box3d"]"Nodoccd6099e-0daa-4c0d-712b-3d07dbdf7890"->"Nodofec1f34e-d624-4241-48ed-4ab3f3fe7b8a""Nodofec1f34e-d624-4241-48ed-4ab3f3fe7b8a"[label= "10", shape ="box3d"]"Nodofec1f34e-d624-4241-48ed-4ab3f3fe7b8a"->"Nodo195e6dbd-d41c-4874-7b3b-44e75db672aa""Nodo195e6dbd-d41c-4874-7b3b-44e75db672aa"[label= "4", shape ="box3d"]}
+
