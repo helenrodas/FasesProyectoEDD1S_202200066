@@ -246,7 +246,7 @@ module avl_module
 
 
     dotStructure = "digraph G{" // new_line('a')
-    dotStructure = dotStructure // "Node_AVL [shape=Mcircle];" // new_line('a')
+    ! dotStructure = dotStructure // "Node_AVL [shape=Mcircle];" // new_line('a')
 
     if (associated(this%root)) then
         call RoamTree(this%root, createNodes, linkNodes)

@@ -127,7 +127,7 @@ program main
       ! print*,"print desde arbol b"
       ! call inorder(root)
       ! print*,"print desde lista"
-      call listaU%print()
+      ! call listaU%print()
       print*, "Usuario agregado!"
     end if
     ! call op_menuUsuario()
@@ -318,19 +318,22 @@ program main
     read*, numCapas
     allocate(ids_a_buscar(numCapas))  ! Tamaño del arreglo
     ! Leer los IDs de capas ingresados por el usuario
+
     do i = 1, numCapas
       print *, "Ingrese el ID de la capa ", i, ": "
       read *, ids_a_buscar(i)
   end do
 
+  
+  call usuarioTemp%tree%buscarIdGraph(ids_a_buscar)
   ! Imprimir los IDs de capas ingresados
-  print *, "Los IDs de capas a buscar son: "
-  do i = 1, numCapas
+  ! print *, "Los IDs de capas a buscar son: "
+  ! do i = 1, numCapas
       ! print *, ids_a_buscar(i)
-  end do
+  ! end do
 
   ! Llamamos a la función buscarIdGraph con el arreglo de IDs
-  call usuarioTemp%tree%buscarIdGraph(ids_a_buscar)
+  
 
   end subroutine recorridoCapa
 
@@ -344,8 +347,7 @@ program main
     print *, "3. Ver listado de Albumes"
     print *, "4. Ver Capa"
     print *, "5. Ver Imagen y Arbol de Capas"
-    print *, "6. Ver Arbol de Clientes"
-    print *, "7. Salir"
+    print *, "6. Salir"
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_estadoEstructuras
@@ -378,8 +380,6 @@ program main
         read*, idCapa
         call usuarioTemp%avlTree%ABBAVLGraph(idCapa)
       case(6)
-        print *, "pendiente graficar arbol de clientes "
-      case(7)
             exit
           case default
             print *, "Error!. Seleccione una opcion valida."
@@ -601,7 +601,7 @@ program main
 
     read(dpi, *) dpiAsInt
     call listaU%actualizarUsuario(dpiAsInt,usuario,password)
-    call listaU%print()
+    ! call listaU%print()
     
   end subroutine modificarUsuario
 
@@ -614,7 +614,7 @@ program main
 
     read(dpi, *) dpiAsInt
     call listaU%eliminarUsuario(dpiAsInt)
-    call listaU%print()
+    ! call listaU%print()
     
   end subroutine borrarUsuario
 
@@ -731,7 +731,7 @@ subroutine readCapas()
   end do
   call json%destroy()
   call listaU%modificarCantidad(usuarioTemp%dpi,size_capa,0)
-  print*," "
+  print*,"----------------------------------- "
   print*,"Archivo Capas leido exitosamente"
   
 end subroutine readCapas
@@ -762,7 +762,7 @@ subroutine readImg()
       deallocate(capas)
   end do
 
-  print*," "
+  print*,"----------------------------------- "
   print*,"Archivo Imagenes leido exitosamente"
   call listaU%modificarCantidad(usuarioTemp%dpi,0,size_capa)
   call json%destroy()
@@ -795,6 +795,7 @@ subroutine readAlbum()
   end do
   ! call usuarioTemp%listaAlbums%print()
   call json%destroy()
+  print*,"---------------------------------"
   print*,"Archivo albums leido exitosamente"
 end subroutine readAlbum
 

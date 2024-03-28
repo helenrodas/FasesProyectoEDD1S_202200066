@@ -128,6 +128,7 @@ subroutine buscarIdGraph(self, ids)
 
     num_ids = size(ids)
 
+    print*, "num_ids: ", num_ids
     ! Inicializar matriz combinada
     allocate(combined_matrix)
     call combined_matrix%init()
