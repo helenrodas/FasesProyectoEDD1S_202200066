@@ -10,7 +10,7 @@ module avl_module
 
     type, public ::  Node_AVL
         integer :: Value
-        integer :: Factor
+        integer :: altura = 1
         type(Node_AVL), pointer :: Left => null()
         type(Node_AVL), pointer :: Right => null()
         type(abb),allocatable :: arbol
@@ -21,7 +21,7 @@ module avl_module
     type,public :: avl
         type(Node_AVL), pointer :: root => null()
         contains
-        procedure :: newTree
+        ! procedure :: newTree
         procedure :: insert
         procedure :: avlGraph
         procedure :: insertInABB
@@ -33,157 +33,204 @@ module avl_module
 
     contains
 
-    function NewNode(value) result(nodePtr)
-    type(Node_AVL), pointer :: nodePtr
-    integer, intent(in) :: value
-    allocate(nodePtr)
-    nodePtr%Value = value
-    nodePtr%Factor = 0
-    nodePtr%Left => null()
-    nodePtr%Right => null()
-    allocate(nodePtr%arbol)
-    allocate(nodePtr%capaimg(0))
-    
-    end function NewNode
+    subroutine insert(self, val)
+        class(avl), intent(inout) :: self
+        integer, intent(in) :: val
 
-    subroutine newTree(self)
-    class(avl), intent(inout) :: self
-    self%root => null()
-    end subroutine newTree
-
-    function rotationII(n, n1) result(result_node)
-        type(Node_AVL), pointer :: n, n1, result_node
-        
-        n%Left => n1%Right
-        n1%Right => n
-        if (n1%Factor == -1) then
-            n%Factor = 0
-            n1%Factor = 0
-        else
-            n%Factor = -1
-            n1%Factor = 1
-        end if
-        result_node => n1
-    end function rotationII
-
-    function rotationDD(n, n1) result(result_node)
-        type(Node_AVL), pointer :: n, n1, result_node
-
-        n%Right => n1%Left
-        n1%Left => n
-        if (n1%Factor == 1) then
-            n%Factor = 0
-            n1%Factor = 0
-        else
-            n%Factor = 1
-            n1%Factor = -1
-        end if
-        result_node => n1
-    end function rotationDD
-
-    function rotationDI(n, n1) result(result_node)
-    type(Node_AVL), pointer :: n, n1, result_node, n2
-
-    n2 => n1%Left
-    n%Right => n2%Left
-    n2%Left => n
-    n1%Left => n2%Right
-    n2%Right => n1
-    if (n2%Factor == 1) then
-        n%Factor = -1
-    else
-        n%Factor = 0
-    end if
-    if (n2%Factor == -1) then
-        n1%Factor = 1
-    else
-        n1%Factor = 0
-    end if
-    n2%Factor = 0
-    result_node => n2
-    end function rotationDI
-
-    function rotationID(n, n1) result(result_node)
-        type(Node_AVL), pointer :: n, n1, result_node, n2
-        n2 => n1%Right
-        n%Left => n2%Right
-        n2%Right => n
-        n1%Right => n2%Left
-        n2%Left => n1
-        if (n2%Factor == 1) then
-            n1%Factor = -1
-        else
-            n1%Factor = 0
-        end if
-        if (n2%Factor == -1) then
-            n%Factor = 1
-        else
-            n%Factor = 0
-        end if
-        n2%Factor = 0
-        result_node => n2
-    end function rotationID
-
-    recursive function insert2(root, value, increase) result(result_node)
-        type(Node_AVL), pointer :: root, result_node, n1
-        logical, intent(out) :: increase
-        integer, intent(in) :: value
-
-        if (.not. associated(root)) then
-            allocate(result_node)
-            root => NewNode(value)
-            increase = .true.
-        else if (value < root%Value) then
-            root%Left => insert2(root%Left, value, increase)
-            if (increase) then
-            select case (root%Factor)
-                case (RIGHT_HEAVY)
-                    root%Factor = 0
-                    increase = .false.
-                case (BALANCED)
-                    root%Factor = -1
-                case (LEFT_HEAVY)
-                    n1 => root%Left
-                    if (n1%Factor == -1) then
-                        root => rotationII(root, n1)
-                    else
-                        root => rotationID(root, n1)
-                    end if
-                    increase = .false.
-            end select
-            end if
-        else if (value > root%Value) then
-            root%Right => insert2(root%Right, value, increase)
-            if (increase) then
-                select case (root%Factor)
-                case (RIGHT_HEAVY)
-                    n1 => root%Right
-                    if (n1%Factor == 1) then
-                        root => rotationDD(root, n1)
-                    else
-                        root => rotationDI(root, n1)
-                    end if
-                    increase = .false.
-                case (BALANCED)
-                    root%Factor = 1
-                case (LEFT_HEAVY)
-                    root%Factor = 0
-                    increase = .false.
-                end select
-            end if
-        end if
-
-        result_node => root
-    end function insert2
-
-    subroutine insert(tree, value)
-    class(avl), intent(inout) :: tree
-    integer, intent(in) :: value
-    logical :: increase
-
-    increase = .false.
-    tree%root => insert2(tree%root, value, increase)
+        call insertRec(self%root, val)
     end subroutine insert
+
+    subroutine delete(self, val)
+        class(avl), intent(inout) :: self
+        integer, intent(in) :: val
+
+        self%root => deleteRec(self%root, val)
+    end subroutine delete
+
+    subroutine preorden(self)
+        class(avl), intent(in) :: self
+        
+        call preordenRec(self%root)
+    end subroutine preorden
+
+    recursive subroutine insertRec(root, val)
+        type(Node_AVL), pointer, intent(inout) :: root
+        integer, intent(in) :: val
+
+        if(.not. associated(root)) then
+            allocate(root)
+            root = Node_AVL(Value=val)
+            allocate(root%arbol)
+            allocate(root%capaimg(0))
+        else if(val < root%Value) then 
+            call insertRec(root%left, val)
+
+        else if(val > root%Value) then
+            call insertRec(root%right, val)
+        end if
+
+        root%altura = maximo(obtenerAltura(root%left), obtenerAltura(root%right)) + 1
+
+        if(obtenerBalance(root) > 1) then
+            if(obtenerBalance(root%right) < 0) then
+                root%right => rotacionDerecha(root%right)
+                root => rotacionIzquierda(root)
+            else
+                root => rotacionIzquierda(root)
+            end if
+        end if
+
+        if(obtenerBalance(root) < -1) then
+            if(obtenerBalance(root%left) > 0) then
+                root%left => rotacionIzquierda(root%left)
+                root => rotacionDerecha(root)
+
+            else
+                root => rotacionDerecha(root)
+            end if
+        end if
+    end subroutine insertRec
+
+    recursive function deleteRec(root, val) result(res)
+        type(Node_AVL), pointer :: root
+        integer, intent(in) :: val
+
+        type(Node_AVL), pointer :: temp
+        type(Node_AVL), pointer :: res 
+        
+        if(.not. associated(root)) then
+            res => root
+            return
+        end if
+
+        if(val < root%Value) then
+            root%left => deleteRec(root%left, val)
+        
+        else if(val > root%Value) then
+            root%right => deleteRec(root%right, val)
+
+        else
+            if(.not. associated(root%left)) then
+                temp => root%right
+                deallocate(root)
+                res => temp
+
+            else if (.not. associated(root%right)) then
+                temp => root%left
+                deallocate(root)
+                res => temp
+            
+            else
+                call obtenerMayorDeMenores(root%left, temp)
+                root%Value = temp%Value
+                root%left => deleteRec(root%left, temp%Value)
+            end if
+        end if
+
+        res => root
+        if(.not. associated(root)) return
+
+        root%altura = maximo(obtenerAltura(root%left), obtenerAltura(root%right))
+
+        if(obtenerBalance(root) > 1) then
+            if(obtenerBalance(root%right) < 0) then
+                root%right => rotacionDerecha(root%right)
+                root => rotacionIzquierda(root)
+            else
+                root => rotacionIzquierda(root)
+            end if
+        end if
+
+        if(obtenerBalance(root) < -1) then
+            if(obtenerBalance(root%left) > 0) then
+                root%left => rotacionIzquierda(root%left)
+                root => rotacionDerecha(root)
+
+            else
+                root => rotacionDerecha(root)
+            end if
+        end if
+
+        res => root
+    end function deleteRec
+
+    function rotacionIzquierda(root) result(rootDerecha)
+        type(Node_AVL), pointer, intent(in) :: root
+        type(Node_AVL), pointer :: rootDerecha
+        type(Node_AVL), pointer :: temp
+
+        rootDerecha => root%right
+        temp => rootDerecha%left
+
+        rootDerecha%left => root
+        root%right => temp
+
+        root%altura = maximo(obtenerAltura(root%left), obtenerAltura(root%right)) + 1
+        rootDerecha%altura = maximo(obtenerAltura(rootDerecha%left), obtenerAltura(rootDerecha%right)) + 1
+    end function rotacionIzquierda
+
+    function rotacionDerecha(root) result(rootIzquierda)
+        type(Node_AVL), pointer, intent(in) :: root
+        type(Node_AVL), pointer :: rootIzquierda
+        type(Node_AVL), pointer :: temp
+
+        rootIzquierda => root%left
+        temp => rootIzquierda%right
+
+        rootIzquierda%right => root
+        root%left => temp
+
+        root%altura = maximo(obtenerAltura(root%left), obtenerAltura(root%right)) + 1
+        rootIzquierda%altura = maximo(obtenerAltura(rootIzquierda%left), obtenerAltura(rootIzquierda%right)) + 1
+    end function rotacionDerecha
+
+    recursive subroutine obtenerMayorDeMenores(root, mayor)
+        type(Node_AVL), pointer :: root, mayor
+        if(associated(root%right)) then
+            call obtenerMayorDeMenores(root%right, mayor)
+        else
+            mayor => root
+        end if
+    end subroutine obtenerMayorDeMenores
+
+    recursive subroutine preordenRec(root)
+        type(Node_AVL), pointer, intent(in) :: root
+
+        if(associated(root)) then
+            print *, root%Value
+            call preordenRec(root%left)
+            call preordenRec(root%right)
+        end if
+    end subroutine preordenRec
+
+    function maximo(left, right) result(res)
+        integer, intent(in) :: left
+        integer, intent(in) :: right
+
+        integer :: res
+        res = right
+
+        if(left >= right) then
+            res = left
+            return
+        end if
+    end function maximo
+
+    function obtenerBalance(root) result(res)
+        type(Node_AVL), pointer, intent(in) :: root
+        integer :: res
+        
+        res = obtenerAltura(root%right) - obtenerAltura(root%left)
+    end function
+
+    function obtenerAltura(n) result(res)
+        type(Node_AVL), pointer :: n
+        integer :: res
+        res = 0
+
+        if(.not. associated(n)) return
+        res = n%altura
+    end function obtenerAltura
 
 
 
@@ -197,7 +244,7 @@ module avl_module
 
 
     dotStructure = "digraph G{" // new_line('a')
-    dotStructure = dotStructure // "node [shape=circle];" // new_line('a')
+    dotStructure = dotStructure // "Node_AVL [shape=circle];" // new_line('a')
 
     if (associated(this%root)) then
         call RoamTree(this%root, createNodes, linkNodes)

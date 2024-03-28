@@ -346,7 +346,7 @@ program main
   ! Imprimir los IDs de capas ingresados
   print *, "Los IDs de capas a buscar son: "
   do i = 1, numCapas
-      print *, ids_a_buscar(i)
+      ! print *, ids_a_buscar(i)
   end do
 
   ! Llamamos a la función buscarIdGraph con el arreglo de IDs
@@ -654,7 +654,7 @@ end subroutine readUsuarios
 
 subroutine readCapas()
   call json%initialize()
-  call json%load(filename='capa.json')
+  call json%load(filename='ImagenMario.json')
   call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
   call json%get('', listaPunteroCapa, capa_encontrada)
@@ -680,9 +680,9 @@ subroutine readCapas()
           read(fila, *) fila_int
           read(columna, *) columna_int
           call usuarioTemp%tree%buscarId(id_capa_int,columna_int,fila_int,color)
-          print*," "
-          print*, "-----------------------------------------------------"
-          print *, "Capa: ", id_capa, " Pixel (Fila): ", fila, " Pixel (Columna): ", columna, " Color:" ,color
+          ! print*," "
+          ! print*, "-----------------------------------------------------"
+          ! print *, "Capa: ", id_capa, " Pixel (Fila): ", fila, " Pixel (Columna): ", columna, " Color:" ,color
       end do
   end do
   call json%destroy()

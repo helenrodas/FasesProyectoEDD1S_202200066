@@ -61,8 +61,8 @@ subroutine add_matrix(self, other_matrix)
     ! Recorrer la matriz 'other_matrix' e insertar cada valor en 'self'
     do while (associated(current_node))
         ! Imprimir i y j en todos los nodos
-        print *, "i:", current_node%i
-        print *, "j:", current_node%j
+        ! print *, "i:", current_node%i
+        ! print *, "j:", current_node%j
 
         ! Determinar el próximo nodo a visitar antes de procesar el nodo actual
         if (associated(current_node%derecha)) then
@@ -70,12 +70,12 @@ subroutine add_matrix(self, other_matrix)
             temp_node => current_node%derecha
             do while (associated(temp_node%abajo))
                 temp_node => temp_node%abajo
-                print *, "i:", temp_node%i
-                print *, "j:", temp_node%j
+                ! print *, "i:", temp_node%i
+                ! print *, "j:", temp_node%j
                 if (temp_node%i /= -1 .and. temp_node%j /= -1) then
-                    print *, "valor:", temp_node%valor
+                    ! print *, "valor:", temp_node%valor
                     call self%insert(temp_node%i, temp_node%j, temp_node%valor)
-                    print *, "se pudo agregar un nodo :D"
+                    ! print *, "se pudo agregar un nodo :D"
                 end if
             end do
         else
@@ -85,10 +85,10 @@ subroutine add_matrix(self, other_matrix)
         ! Verificar si i y j son diferentes de -1 para considerar el valor del nodo
         if (current_node%i /= -1 .and. current_node%j /= -1) then
             ! Imprimir el valor del nodo
-            print *, "valor:", current_node%valor
+            ! print *, "valor:", current_node%valor
             ! Insertar el nodo actual en la matriz 'self'
             call self%insert(current_node%i, current_node%j, current_node%valor)
-            print *, "se pudo agregar un nodo :D"
+            ! print *, "se pudo agregar un nodo :D"
         end if
 
         ! Mover al siguiente nodo

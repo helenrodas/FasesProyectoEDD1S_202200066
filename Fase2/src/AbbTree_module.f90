@@ -78,10 +78,10 @@ subroutine buscarId(self, val,fila,columa,color)
     node => existeNodo(self%root, val)
     
     if (associated(node)) then
-      print *, "Nodo encontrado"
+    !   print *, "Nodo encontrado"
       call insertarEnMatriz(node,fila,columa,color)
     else
-      print *, "Nodo no encontrado"
+    !   print *, "Nodo no encontrado"
     end if
 
     contains
@@ -110,7 +110,7 @@ subroutine buscarId(self, val,fila,columa,color)
         character(len=7), intent(in) :: color
     
         call node%matriz_temp%insert(fila, columna, color)
-        call node%matriz_temp%print
+        ! call node%matriz_temp%print
     end subroutine insertarEnMatriz
     
 end subroutine buscarId
@@ -134,13 +134,13 @@ subroutine buscarIdGraph(self, ids)
     do i = 1, num_ids
         node => existeNodoGraph(self%root, ids(i))
         if (associated(node)) then
-            print *, "Nodo encontrado con ID:", ids(i)
+            ! print *, "Nodo encontrado con ID:", ids(i)
             ! Agregar la matriz del nodo a la matriz combinada
-            print*, "matriz del nodo"
-            call node%matriz_temp%print()
+            ! print*, "matriz del nodo"
+            ! call node%matriz_temp%print()
             call combined_matrix%add_matrix(node%matriz_temp)
         else
-            print *, "Nodo no encontrado con ID:", ids(i)
+            ! print *, "Nodo no encontrado con ID:", ids(i)
         end if
     end do
 
@@ -181,10 +181,10 @@ subroutine GraphCapa(self, val)
     node => buscarNodoCapa(self%root, val)
 
     if (associated(node)) then
-      print *, "Nodo encontrado"
+    !   print *, "Nodo encontrado"
       call node%matriz_temp%graficar()
     else
-      print *, "Nodo no encontrado"
+    !   print *, "Nodo no encontrado"
     end if
 
     contains
