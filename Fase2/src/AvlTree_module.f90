@@ -29,6 +29,7 @@ module avl_module
         procedure :: getABBInt
         procedure :: existeId
         procedure :: top5_imagenes
+        procedure :: delete
     end type avl
 
     contains

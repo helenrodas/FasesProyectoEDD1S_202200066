@@ -9,6 +9,8 @@ module listaImg_module
             procedure :: print
             procedure :: delete_by_position
             procedure :: grafica_listaImg
+            procedure :: delete_by_id
+            procedure :: idEncontrado
         end type listaImagenes
     
         type,public :: nodeLS
@@ -68,6 +70,57 @@ module listaImg_module
         previous%next => current%next
         deallocate(current)
         end subroutine delete_by_position
+
+
+        subroutine delete_by_id(self, id)
+            class(listaImagenes), intent(inout) :: self
+            integer, intent(in) :: id
+            type(nodeLS), pointer :: current, previous
+        
+            current => self%head
+            previous => null()
+        
+            if (associated(current) .and. current%value == id) then
+                self%head => current%next
+                deallocate(current)
+                return
+            end if
+        
+            do while (associated(current))
+                if (current%value == id) then
+                    previous%next => current%next
+                    deallocate(current)
+                    return
+                end if
+                previous => current
+                current => current%next
+            end do
+        
+            print *, 'ID not found'
+        end subroutine delete_by_id
+
+        subroutine idEncontrado(self, id, encontrado)
+            class(listaImagenes), intent(inout) :: self
+            integer, intent(in) :: id
+            logical, intent(out) :: encontrado
+            type(nodeLS), pointer :: current
+        
+            current => self%head
+            encontrado = .false.
+        
+            do while (associated(current))
+                if (current%value == id) then
+                    encontrado = .true.
+                    return
+                end if
+                current => current%next
+            end do
+        end subroutine idEncontrado
+        
+        
+
+
+
     
         subroutine print(self)
         class(listaImagenes), intent(in) :: self

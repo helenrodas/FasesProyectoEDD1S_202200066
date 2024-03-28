@@ -48,7 +48,7 @@ program main
     logical :: capa_encontrada
     integer :: size_capa, contador_capa, size_pixel, contador_pixel
     character(:), allocatable :: id_capa, fila, columna, color
-    integer ::  fila_int, columna_int
+    integer ::  fila_int, columna_int,idImagenAEliminar
     integer, dimension(:), allocatable :: ids_a_buscar
 
   logical :: found
@@ -427,7 +427,7 @@ program main
       case(1)
         call registrarImg()
       case(2)
-        print *, "Funcion eliminar pendiente... "
+        call eliminarImagen()
       case(3)
             exit
           case default
@@ -467,6 +467,20 @@ program main
         end if
 
   end subroutine registrarImg
+
+
+  subroutine eliminarImagen()
+    print*,"Ingrese el id de la imagen a eliminar:"
+    read*, idImagenAEliminar
+    idEncontrado = usuarioTemp%avlTree%existeId(idImagenAEliminar)
+        if ( idEncontrado ) then
+          call usuarioTemp%avlTree%delete(idImagenAEliminar)
+          print*, "Imagen eliminada de arbol avl!"
+          call usuarioTemp%listaAlbums%buscarAlbum(idImagenAEliminar)
+        else
+          print*,"Error! Imagen no se pudo eliminar o no existe..."
+        end if
+  end subroutine eliminarImagen
 
 
   subroutine menu_reportes()

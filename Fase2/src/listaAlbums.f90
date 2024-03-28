@@ -13,6 +13,7 @@ module listaAlbums_module
                 procedure :: print
                 procedure :: almbumGraphic
                 procedure :: remove
+                procedure :: buscarAlbum
             end type listaAlbums
         
             type,public :: nodeLD
@@ -72,6 +73,29 @@ module listaAlbums_module
                     end do
                 end if
             end subroutine print
+
+            subroutine buscarAlbum(self,idImagen)
+                class(listaAlbums), intent(in) :: self
+                type(nodeLD), pointer :: actual
+                integer, intent(in) :: idImagen
+                logical :: imagenEncontrada
+            
+                if (.not. associated(self%head)) then
+                    print *, "No hay albumes"
+                else
+                    actual => self%head
+                    do
+                        call actual%myLista_img%idEncontrado(idImagen,imagenEncontrada)
+                        if(imagenEncontrada)then
+                            call actual%myLista_img%delete_by_id(idImagen)
+                            print*, "Imagen eliminada de album!"
+                        end if
+                        actual => actual%next
+                        if(associated(actual, self%head)) exit
+                    end do
+                end if
+            end subroutine buscarAlbum
+            
         
             subroutine remove(self, nombre_album)
             class(listaAlbums), intent(inout) :: self
