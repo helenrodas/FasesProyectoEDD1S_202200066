@@ -14,6 +14,7 @@ module listaAlbums_module
                 procedure :: almbumGraphic
                 procedure :: remove
                 procedure :: buscarAlbum
+                procedure :: printReporte
             end type listaAlbums
         
             type,public :: nodeLD
@@ -228,4 +229,25 @@ module listaAlbums_module
             end subroutine almbumGraphic
             
 
+            subroutine printReporte(self)
+                class(listaAlbums), intent(in) :: self
+                type(nodeLD), pointer :: actual
+                ! aux => self%head
+        
+                print *, ""
+                
+                if (.not. associated(self%head)) then
+                    print *, "No hay albumes"
+                else
+                    actual => self%head
+                    do
+                        print *, "-----------------------------"
+                        print *, "Nombre: ",actual%nombre_album
+                        print *, "cantidad imagenes: " , actual%myLista_img%size
+                        print *, "-----------------------------------------"
+                        actual => actual%next
+                        if(associated(actual, self%head)) exit
+                    end do
+                end if
+            end subroutine printReporte
 end module listaAlbums_module

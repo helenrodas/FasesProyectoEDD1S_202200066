@@ -464,6 +464,7 @@ program main
           ids_a_buscar(i) = id
           end do
           call usuarioTemp%avlTree%insertInABB(idnuevaImg,ids_a_buscar)
+          call listaU%modificarCantidad(usuarioTemp%dpi,0,1)
         end if
 
   end subroutine registrarImg
@@ -477,6 +478,7 @@ program main
           call usuarioTemp%avlTree%delete(idImagenAEliminar)
           print*, "Imagen eliminada de arbol avl!"
           call usuarioTemp%listaAlbums%buscarAlbum(idImagenAEliminar)
+          call listaU%modificarCantidad(usuarioTemp%dpi,0,-1)
         else
           print*,"Error! Imagen no se pudo eliminar o no existe..."
         end if
@@ -541,7 +543,8 @@ program main
     print *, "1. Grafica Arbol B Usuarios"
     print *, "2. Operaciones sobre usuarios"
     print *, "3. Carga masiva de usuarios"
-    print *, "4. Cerrar Sesion"
+    print *, "4. Reporte"
+    print *, "5. Cerrar Sesion"
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_admin
@@ -554,12 +557,14 @@ program main
       
       select case(option)
       case(1)
-        print*, "Aqui se va a generar la grafica Arbol B"
+        call listaU%clientesGraph()
       case(2)
         call op_operacionesUsuarios()
       case(3)
         call readUsuarios()
       case(4)
+        call reporteUsuario()
+    case(5)
             exit
           case default
             print *, "Error!. Seleccione una opcion valida."
@@ -631,6 +636,17 @@ program main
     
   end subroutine borrarUsuario
 
+  subroutine reporteUsuario()
+    character(len=100) :: dpi
+    integer*8 :: dpiAsInt
+    print *, "--------------------"
+    print *, "Ingrese el dpi del usuario a buscar: "
+    read*, dpi
+
+    read(dpi, *) dpiAsInt
+    call listaU%clienteABuscar(dpiAsInt)
+  end subroutine reporteUsuario
+
   subroutine readUsuarios()
     integer*8 :: dpiAsInt
     print *, "---------------------------------------"
@@ -700,6 +716,7 @@ subroutine readCapas()
       end do
   end do
   call json%destroy()
+  call listaU%modificarCantidad(usuarioTemp%dpi,size_capa,0)
   print*," "
   print*,"Archivo Capas leido exitosamente"
   
@@ -733,6 +750,7 @@ subroutine readImg()
 
   print*," "
   print*,"Archivo Imagenes leido exitosamente"
+  call listaU%modificarCantidad(usuarioTemp%dpi,0,size_capa)
   call json%destroy()
 end subroutine readImg
 

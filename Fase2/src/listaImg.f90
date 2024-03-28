@@ -3,7 +3,7 @@ module listaImg_module
         private
         type,public :: listaImagenes
         type(nodeLS), pointer :: head => null() ! head of the list
-    
+        integer :: size = 0
         contains
             procedure :: push
             procedure :: print
@@ -37,6 +37,7 @@ module listaImg_module
             self%head => newNode
         end if
     
+        self%size = self%size + 1
         !print *, 'pushed:: ', value
         end subroutine push
     
@@ -96,7 +97,7 @@ module listaImg_module
                 current => current%next
             end do
         
-            print *, 'ID not found'
+            ! print *, 'ID no encontrado'
         end subroutine delete_by_id
 
         subroutine idEncontrado(self, id, encontrado)

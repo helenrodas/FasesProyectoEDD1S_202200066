@@ -15,6 +15,9 @@ module linkedList_module
             procedure :: existeUsuario
             procedure :: actualizarUsuario
             procedure :: eliminarUsuario
+            procedure :: modificarCantidad
+            procedure :: clienteABuscar
+            procedure :: clientesGraph
             ! procedure :: grafica_listaImg
         end type listaUser
     
@@ -25,6 +28,8 @@ module linkedList_module
         type(avl) :: avlTree
         type(listaAlbums) :: listaAlbums
         type(nodeUser), pointer :: next
+        integer :: numImagenes = 0
+        integer :: numCapas = 0
         end type nodeUser
     
         contains
@@ -196,5 +201,86 @@ module linkedList_module
                 print *, 'Usuario no encontrado.'
             end if
         end subroutine eliminarUsuario
+
+        subroutine modificarCantidad(self,dpi,numCapas,numImagenes)
+            class(listaUser), intent(inout) :: self
+            integer ,intent(in) :: numCapas,numImagenes
+            integer*8, intent(in) :: dpi
+            type(nodeUser), pointer :: current
+
+            current => self%head
+
+            do while (associated(current))
+                if (current%dpi == dpi) then
+                    current%numCapas = numCapas + current%numCapas
+                    current%numImagenes = numImagenes + current%numImagenes
+                    
+                    return
+                end if
+                current => current%next
+            end do
+        
+            print *, "Usuario no encontrado."    
+        end subroutine modificarCantidad
+
+
+        subroutine clienteABuscar(self, dpi)
+            class(listaUser), intent(inout) :: self
+            integer*8, intent(in) :: dpi
+            
+            type(nodeUser), pointer :: current
+        
+            current => self%head
+        
+            do while (associated(current))
+                if (current%dpi == dpi) then
+                    print *, "DPI: " , current%dpi
+                    print *, "Nombre: ", current%nombre
+                    print *, "Paasword: ", current%password
+                    call current%listaAlbums%printReporte()
+                    print *, "Cantidad de capas totales: ", current%numCapas
+                    print * , "Cantidad de imagenes totales: " , current%numImagenes
+                    
+                    return
+                end if
+                current => current%next
+            end do
+        
+            print *, "Usuario no encontrado."
+        end subroutine clienteABuscar
+
+
+        subroutine clientesGraph(self)
+
+            class(listaUser), intent(inout) :: self
+            type(nodeUser), pointer :: current
+            character(len=:), allocatable :: filepath
+            integer :: unit, counter
+    
+            filepath = trim("clientes") 
+            open(unit, file=filepath, status='replace')
+            write(unit, *) 'digraph cola {node [fontname="Arial"]'
+            write(unit, *) '    node [shape=ellipse]; rankdir = LR'
+            current => self%head
+            counter = 0
+    
+            do while (associated(current))
+                counter = counter + 1
+                write(unit, *) '    "Node', counter, '" [label="', &
+                                    "DPI: ", current%dpi, "\n", &
+                                    "Nombre: ", current%nombre, "\n", &
+                                    '"];'
+                if (associated(current%next)) then
+                    write(unit, *) '    "Node', counter, '" -> "Node', counter+1, '";'
+                end if
+                current => current%next
+            end do 
+            write(unit, *) '}'
+            close(unit)
+            call system('dot -Tpng ' // trim(filepath) // ' -o ' // trim(adjustl(filepath)) // '.png')
+            print *, 'Grafica clientes generada!: ', trim(adjustl(filepath)) // '.png'
+            call execute_command_line('start '//trim('clientes.png'))
+        end subroutine clientesGraph
+
 
     end module linkedList_module
