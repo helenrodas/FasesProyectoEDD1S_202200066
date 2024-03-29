@@ -117,12 +117,7 @@ module listaImg_module
                 current => current%next
             end do
         end subroutine idEncontrado
-        
-        
 
-
-
-    
         subroutine print(self)
         class(listaImagenes), intent(in) :: self
     

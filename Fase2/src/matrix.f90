@@ -337,9 +337,6 @@ end subroutine insert
     end function obtenerValor
 
 
-    
-
-
     subroutine graficar(self)
         class(matrix), intent(in) :: self
         

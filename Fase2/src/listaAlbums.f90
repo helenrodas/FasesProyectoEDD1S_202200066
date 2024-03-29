@@ -244,7 +244,7 @@ module listaAlbums_module
                         print *, "-----------------------------"
                         print *, "Nombre: ",actual%nombre_album
                         print *, "cantidad imagenes: " , actual%myLista_img%size
-                        print *, "-----------------------------------------"
+                        print *, "-----------------------------"
                         actual => actual%next
                         if(associated(actual, self%head)) exit
                     end do

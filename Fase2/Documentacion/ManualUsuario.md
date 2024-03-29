@@ -75,7 +75,7 @@ y genera la imagen
 Solicitara el id de la imagen que se quiere buscar pero el recorrido que hara en el arbol es por amplitdu.
 ![Imagen](/Fase2/Documentacion/Imagenes/26.png)
 y genera la imagen
-![Imagen](/Documentacion/Imagenes/27.png)
+![Imagen](/Fase2/Documentacion/Imagenes/27.png)
 - Por capa
 Esta opcion va a buscar una o varias capas a su eleccion para poder graficar
 ![Imagen](/Fase2/Documentacion/Imagenes/28.png)
