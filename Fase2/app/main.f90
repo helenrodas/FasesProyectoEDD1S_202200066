@@ -192,17 +192,24 @@ program main
 
   subroutine op_CargaArchivos()
     integer :: option
+    character(len=100) :: nombre
     do
       call menu_cargaArchivos()
       read(*, *) option
       
       select case(option)
       case(1)
-        call readCapas()
+        print *, "Ingrese el nombre del archivo .json: "
+        read(*,'(A)') nombre
+        call readCapas(nombre)
       case(2)
-        call readImg
+        print *, "Ingrese el nombre del archivo .json: "
+        read(*,'(A)') nombre
+        call readImg(nombre)
       case(3)
-        call readAlbum()
+        print *, "Ingrese el nombre del archivo .json: "
+        read(*,'(A)') nombre
+        call readAlbum(nombre)
       case(4)
             exit
           case default
@@ -533,6 +540,7 @@ program main
 
   subroutine op_menuAdmin()
     integer :: option
+    character(len=100) :: nombre
     do
       call menu_admin()
       read(*, *) option
@@ -543,7 +551,9 @@ program main
       case(2)
         call op_operacionesUsuarios()
       case(3)
-        call readUsuarios()
+        print *, "Ingrese el nombre del archivo .json: "
+        read(*,'(A)') nombre
+        call readUsuarios(nombre)
       case(4)
         call op_reportesAdmin()
     case(5)
@@ -663,12 +673,15 @@ program main
   end subroutine reporteUsuario
 
 
-  subroutine readUsuarios()
+  subroutine readUsuarios(nombreArchivo)
     integer*8 :: dpiAsInt
+    character(len=*), intent(in)::nombreArchivo
+    character(len=100) :: filename 
+
     print *, "---------------------------------------"
-    print *, "----- Lista Usuarios -----"
     call json%initialize()
-    call json%load(filename='usuarios.json')
+    filename = trim(nombreArchivo) // '.json'
+    call json%load(filename=filename)
     call json%info('',n_children=size)
     call json%get_core(jsonc)
     call json%get('', listPointer, found)
@@ -691,14 +704,18 @@ program main
 
     end do
     ! call inorder(root)
-    ! call listaU%print()
+    call listaU%print()
     call json%destroy()
     print*,"Archivo usuarios leido exitosamente"
 end subroutine readUsuarios
 
-subroutine readCapas()
+subroutine readCapas(nombreArchivo)
+  character(len=*), intent(in)::nombreArchivo
+  character(len=100) :: filename 
+
   call json%initialize()
-  call json%load(filename='ImagenMario.json')
+  filename = trim(nombreArchivo) // '.json'
+  call json%load(filename=filename)
   call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
   call json%get('', listaPunteroCapa, capa_encontrada)
@@ -736,9 +753,12 @@ subroutine readCapas()
   
 end subroutine readCapas
 
-subroutine readImg()
+subroutine readImg(nombreArchivo)
+  character(len=*), intent(in)::nombreArchivo
+  character(len=100) :: filename 
   call json%initialize()
-  call json%load(filename='imagenes.json')
+  filename = trim(nombreArchivo) // '.json'
+  call json%load(filename=filename)
   call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
   call json%get('', listaPunteroCapa, capa_encontrada)
@@ -769,10 +789,13 @@ subroutine readImg()
 end subroutine readImg
 
 
-subroutine readAlbum()
+subroutine readAlbum(nombreArchivo)
   type(listaImagenes),pointer::ImagenesList
+  character(len=*), intent(in)::nombreArchivo
+  character(len=100) :: filename 
   call json%initialize()
-  call json%load(filename='album.json')
+  filename = trim(nombreArchivo) // '.json'
+  call json%load(filename=filename)
   call json%info('',n_children=size_capa)
   call json%get_core(jsonc)
   call json%get('', listaPunteroCapa, capa_encontrada)
