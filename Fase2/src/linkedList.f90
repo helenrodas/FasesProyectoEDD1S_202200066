@@ -2,11 +2,13 @@ module linkedList_module
     use abb_m
     use avl_module
     use listaAlbums_module
+    use module_btree
     implicit none
+    
         private
         type,public :: listaUser
         type(nodeUser), pointer :: head => null() ! head of the list
-    
+        
         contains
             procedure :: push
             procedure :: print
@@ -18,6 +20,7 @@ module linkedList_module
             procedure :: modificarCantidad
             procedure :: clienteABuscar
             procedure :: clientesGraph
+            procedure :: returnAllDPIs
             ! procedure :: grafica_listaImg
         end type listaUser
     
@@ -34,29 +37,33 @@ module linkedList_module
     
         contains
     
-        subroutine push(self, dpi,nombre,password)
-        class(listaUser), intent(inout) :: self
-        integer*8, intent(in) :: dpi
-        character(len=*), intent(in)::nombre
-        character(len=*), intent(in)::password
-    
-        type(nodeUser), pointer :: newNode
-        allocate(newNode)
-    
-        newNode%dpi = dpi
-        newNode%nombre = nombre
-        newNode%password = password
-        newNode%next => null()
-    
-        if (.not. associated(self%head)) then
-            self%head => newNode
-        else
-            newNode%next => self%head
-            self%head => newNode
-        end if
-    
-        !print *, 'pushed:: ', value
+        subroutine push(self, dpi, nombre, password)
+            class(listaUser), intent(inout) :: self
+            integer*8, intent(in) :: dpi
+            character(len=*), intent(in) :: nombre
+            character(len=*), intent(in) :: password
+        
+            type(nodeUser), pointer :: newNode, current
+            allocate(newNode)
+        
+            newNode%dpi = dpi
+            newNode%nombre = nombre
+            newNode%password = password
+            newNode%next => null()
+        
+            if (.not. associated(self%head)) then
+                self%head => newNode
+            else
+                current => self%head
+                do while (associated(current%next))
+                    current => current%next
+                end do
+                current%next => newNode
+            end if
+        
+            !print *, 'pushed:: ', dpi
         end subroutine push
+        
     
         subroutine delete_by_position(self, position)
         class(listaUser), intent(inout) :: self
@@ -131,18 +138,17 @@ module linkedList_module
             end do
         end subroutine buscarUsuario
 
-        subroutine existeUsuario(self, nombreUsuario, passwordUsuario, encontrado)
+        subroutine existeUsuario(self, dpiUsuario, encontrado)
             class(listaUser), intent(inout) :: self
-            character(len=*), intent(in) :: nombreUsuario, passwordUsuario
             logical, intent(out) :: encontrado
-        
+            integer*8,intent(in)::dpiUsuario
             type(nodeUser), pointer :: current
         
             current => self%head
             encontrado = .false.
         
             do while (associated(current))
-                if (trim(current%nombre) == trim(nombreUsuario) .and. trim(current%password) == trim(passwordUsuario)) then
+                if ( (current%dpi) == (dpiUsuario)) then
                     encontrado = .true.
                     exit
                 else
@@ -173,16 +179,20 @@ module linkedList_module
             print *, "Usuario no encontrado."
         end subroutine actualizarUsuario
         
-        subroutine eliminarUsuario(self, dpi)
+        subroutine eliminarUsuario(self, dpi,arbolUSuarios)
             class(listaUser), intent(inout) :: self
             integer*8, intent(in) :: dpi
             type(nodeUser), pointer :: current, previous
+            ! type(B_usuario), pointer :: arbolBTemp
+            type(B_usuario),intent(inout) :: arbolUSuarios
             logical :: encontrado
         
             current => self%head
             previous => null()
             encontrado = .false.
         
+            call arbolUSuarios%deleteTree()
+
             do while (associated(current) .and. .not. encontrado)
                 if (current%dpi == dpi) then
                     encontrado = .true.
@@ -192,13 +202,16 @@ module linkedList_module
                         self%head => current%next
                     end if
                     deallocate(current)
+                    
                     print *, 'Usuario eliminado!'
                 else
                     previous => current
                     current => current%next
                 end if
             end do
-        
+
+            call returnAllDPIs(self,arbolUSuarios)
+
             if (.not. encontrado) then
                 print *, 'Usuario no encontrado.'
             end if
@@ -221,7 +234,7 @@ module linkedList_module
                 end if
                 current => current%next
             end do
-        
+            
             print *, "Usuario no encontrado."    
         end subroutine modificarCantidad
 
@@ -284,5 +297,22 @@ module linkedList_module
             call execute_command_line('start '//trim('clientes.png'))
         end subroutine clientesGraph
 
+        subroutine returnAllDPIs(self,arbolUSuarios)
+            class(listaUser), intent(inout) :: self
+            type(nodeUser), pointer :: current
+            integer*8 :: dpiReturn
+            type(B_usuario),intent(inout) :: arbolUSuarios
+        
+            current => self%head
+        
+            do while (associated(current))
+                ! print *, "DPI del nodo actual: ", current%dpi
+                dpiReturn = current%dpi
+                call arbolUSuarios%insert(current%dpi)
+                ! print*, dpiReturn
+                current => current%next
+            end do
+            ! call arbolUSuarios%graphBTree(arbolUSuarios%returnRoot())
+        end subroutine returnAllDPIs
 
     end module linkedList_module

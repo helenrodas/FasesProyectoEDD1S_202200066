@@ -24,9 +24,9 @@ module avl_module
         ! procedure :: newTree
         procedure :: insert
         procedure :: avlGraph
-        procedure :: insertInABB
-        procedure :: getABB
-        procedure :: getABBInt
+        procedure :: agregarEnABB
+        procedure :: returnABB
+        procedure :: returnABBInt
         procedure :: existeId
         procedure :: top5_imagenes
         procedure :: delete
@@ -317,7 +317,7 @@ end subroutine RoamTree
 
 
 
-    subroutine insertInABB(self, id, data)
+    subroutine agregarEnABB(self, id, data)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         integer, dimension(:), intent(in) :: data  ! Cambia esto para aceptar un arreglo
@@ -335,7 +335,7 @@ end subroutine RoamTree
                 call node%arbol%insert(data(i))
             end do
         end if
-    end subroutine insertInABB
+    end subroutine agregarEnABB
     
     
     recursive function search(root, id) result(node)
@@ -354,7 +354,7 @@ end subroutine RoamTree
     end function search
     
 
-    function getABB(self, id) result(result)
+    function returnABB(self, id) result(result)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         type(Node_AVL), pointer :: node
@@ -366,11 +366,11 @@ end subroutine RoamTree
         else
             nullify(result)
         end if
-    end function getABB
+    end function returnABB
     
 
 
-    function getABBInt(self, id) result(result)
+    function returnABBInt(self, id) result(result)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         type(Node_AVL), pointer :: node
@@ -382,7 +382,7 @@ end subroutine RoamTree
         else
             nullify(result)
         end if
-    end function getABBInt
+    end function returnABBInt
 
     function existeId(self, id) result(existe)
         class(avl), intent(inout) :: self

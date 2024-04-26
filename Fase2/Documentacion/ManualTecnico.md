@@ -254,7 +254,7 @@ subroutine readImg()
       end do
       ! print*, "ID: ", id, "Capas: ", capas
       
-      call usuarioTemp%avlTree%insertInABB(id,capas)
+      call usuarioTemp%avlTree%agregarEnABB(id,capas)
       deallocate(capas)
   end do
 
@@ -298,16 +298,16 @@ end subroutine readAlbum
 ## BTree_module
 Modulo para arbol B
 ```fortran
-type :: BTree
+type :: B_usuario
         integer*8 :: dpi
         character(:), allocatable :: name, password
-        type(BTree), pointer :: left => null(), right => null()
-    end type BTree
+        type(B_usuario), pointer :: left => null(), right => null()
+    end type B_usuario
 
     contains
 
     recursive subroutine insert(root, dpi, name, password)
-        type(BTree), pointer, intent(inout) :: root
+        type(B_usuario), pointer, intent(inout) :: root
         integer*8, intent(in) :: dpi
         character(len=*), intent(in) :: name, password
 
@@ -1012,9 +1012,9 @@ Modulo del arbol AVL
         ! procedure :: newTree
         procedure :: insert
         procedure :: avlGraph
-        procedure :: insertInABB
-        procedure :: getABB
-        procedure :: getABBInt
+        procedure :: agregarEnABB
+        procedure :: returnABB
+        procedure :: returnABBInt
         procedure :: existeId
         procedure :: top5_imagenes
         procedure :: delete
@@ -1223,7 +1223,7 @@ end subroutine RoamTree
 ```
 Funciones para retornar el arbol ABB del nodo del AVL
 ```fortran
-    function getABB(self, id) result(result)
+    function returnABB(self, id) result(result)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         type(Node_AVL), pointer :: node
@@ -1235,11 +1235,11 @@ Funciones para retornar el arbol ABB del nodo del AVL
         else
             nullify(result)
         end if
-    end function getABB
+    end function returnABB
     
 
 
-    function getABBInt(self, id) result(result)
+    function returnABBInt(self, id) result(result)
         class(avl), intent(inout) :: self
         integer, intent(in) :: id
         type(Node_AVL), pointer :: node
@@ -1251,7 +1251,7 @@ Funciones para retornar el arbol ABB del nodo del AVL
         else
             nullify(result)
         end if
-    end function getABBInt
+    end function returnABBInt
 ```
 Funcion para verificar si existe un nodo por su id en el arbol
 ```fortran

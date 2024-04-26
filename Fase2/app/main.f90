@@ -1,12 +1,13 @@
 program main
   use:: json_module
-  use BTree_module
+  use module_btree
   use abb_m
   use matrix_m
   use avl_module
   use listaAlbums_module
   use listaImg_module
   use linkedList_module
+  use module_btree
 
   implicit none
   integer :: option,size, i,dpiAsInt,io,img_album,idCapa,idnuevaImg,cantidadCapas,numNodos
@@ -20,9 +21,11 @@ program main
   logical:: idEncontrado,capaEncontrada,usuarioExiste
 
 
+  ! type(B_usuario) :: arbolUSuarios
+  type(B_usuario) :: arbolUSuarios
   type(nodeUser), pointer :: usuarioTemp
   type(listaUser) :: listaU
-  type(BTree), pointer :: root => null()
+  type(B_usuario), pointer :: root => null()
   type(abb) :: arbolTemp
   type(matrix) :: m
   type(json_file) :: json
@@ -118,19 +121,18 @@ program main
     
     read(dpi, *) dpiAsInt
 
-    call listaU%existeUsuario(usuario,password,usuarioExiste)
+    call listaU%existeUsuario(dpiAsInt,usuarioExiste)
     if(usuarioExiste) then
       print*, "El usuario ya existe!"
     else 
-      ! call insert(root,dpiAsInt,usuario,password)  este metodo es para el arbol b
       call listaU%push(dpiAsInt,usuario,password)
+      call arbolUSuarios%insert(dpiAsInt)
       ! print*,"print desde arbol b"
       ! call inorder(root)
       ! print*,"print desde lista"
       ! call listaU%print()
       print*, "Usuario agregado!"
     end if
-    ! call op_menuUsuario()
   end subroutine nuevo_usuario
 
   subroutine menu_usuario()
@@ -311,10 +313,10 @@ program main
     print *, "Ingrese el id de la imagen a buscar: "
     read*, id_imagenAmplitud
     print *, "---------------------"
-    arbolTemp = usuarioTemp%avlTree%getABB(id_imagenAmplitud)
+    arbolTemp = usuarioTemp%avlTree%returnABB(id_imagenAmplitud)
     call arbolTemp%recorrido_amplitud(amplitud_rec) !Esto me devuelve el recorrido como arbol y una cadena de char
     print *, "Amplitud: " , amplitud_rec
-    cadena_id = usuarioTemp%avlTree%getABBInt(id_imagenAmplitud)!Esto me devuelve el recorrido como cadena de int
+    cadena_id = usuarioTemp%avlTree%returnABBInt(id_imagenAmplitud)!Esto me devuelve el recorrido como cadena de int
     ! print * , "Amplitud con int cadena: " , cadena_id
     call usuarioTemp%tree%buscarIdGraph(cadena_id)
   end subroutine recorridoAmplitud
@@ -452,7 +454,7 @@ program main
             end do
           ids_a_buscar(i) = id
           end do
-          call usuarioTemp%avlTree%insertInABB(idnuevaImg,ids_a_buscar)
+          call usuarioTemp%avlTree%agregarEnABB(idnuevaImg,ids_a_buscar)
           call listaU%modificarCantidad(usuarioTemp%dpi,0,1)
         end if
 
@@ -547,7 +549,8 @@ program main
       
       select case(option)
       case(1)
-        call listaU%clientesGraph()
+        ! call listaU%clientesGraph()
+        call arbolUSuarios%graphBTree(arbolUSuarios%returnRoot())
       case(2)
         call op_operacionesUsuarios()
       case(3)
@@ -623,7 +626,7 @@ program main
     read*, dpi
 
     read(dpi, *) dpiAsInt
-    call listaU%eliminarUsuario(dpiAsInt)
+    call listaU%eliminarUsuario(dpiAsInt,arbolUSuarios)
     ! call listaU%print()
     
   end subroutine borrarUsuario
@@ -651,7 +654,7 @@ program main
       case(1)
         call reporteUsuario()
       case(2)
-        call listaU%print()
+        call arbolUSuarios%graphBTree(arbolUSuarios%returnRoot())
       case(3)
             exit
           case default
@@ -674,7 +677,7 @@ program main
 
 
   subroutine readUsuarios(nombreArchivo)
-    integer*8 :: dpiAsInt
+    integer*8 :: dpiAsInt,dpiTemp
     character(len=*), intent(in)::nombreArchivo
     character(len=100) :: filename 
 
@@ -701,10 +704,15 @@ program main
         read(dpi, *) dpiAsInt
         ! call insert(root,dpiAsInt,nombreCliente,password)
         call listaU%push(dpiAsInt,nombreCliente,password)
+        call arbolUSuarios%insert(dpiAsInt)
 
     end do
+    ! call listaU%returnAllDPIs()
+    ! call arbolUSuarios%insert(dpiTemp)
+    ! call arbolUSuarios%graphBTree()
     ! call inorder(root)
     call listaU%print()
+    call arbolUSuarios%graphBTree(arbolUSuarios%returnRoot())
     call json%destroy()
     print*,"Archivo usuarios leido exitosamente"
 end subroutine readUsuarios
@@ -778,7 +786,7 @@ subroutine readImg(nombreArchivo)
       end do
       ! print*, "ID: ", id, "Capas: ", capas
       
-      call usuarioTemp%avlTree%insertInABB(id,capas)
+      call usuarioTemp%avlTree%agregarEnABB(id,capas)
       deallocate(capas)
   end do
 
