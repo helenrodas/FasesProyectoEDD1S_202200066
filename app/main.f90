@@ -46,7 +46,7 @@ integer :: option
     if (usuario == "EDD1S2024" .and. password == "ProyectoFase3") then
         call op_menuAdmin()
     else
-          print*, "Usuario no encontrado..."
+          print*, "Usuario no encontrado.."
     end if
         
   end subroutine inicio_sesion
@@ -66,6 +66,7 @@ integer :: option
       case(3)
         print *, "menu reportes"
       case(4)
+        print *, "menu salida"
         exit
       case default
         print *, "Error!. Seleccione una opcion valida."
