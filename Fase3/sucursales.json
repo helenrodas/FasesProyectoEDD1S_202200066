@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "departamento":"Guatemala",
+        "direccion":"8 calle 3-45 zona 1",
+        "password": "G2024"
+    },
+    {
+        "id": 2,
+        "departamento":"Huehuetenango",
+        "direccion":"3 avenida 5-45 zona 2",
+        "password": "H2024"
+    },
+    {
+        "id": 3,
+        "departamento":"Chimaltenango",
+        "direccion":"5 avenida 3-44 zona 4",
+        "password": "C2024"
+    },
+    {
+        "id": 4,
+        "departamento":"Quiche",
+        "direccion":"5 calle 3-12 zona 1",
+        "password": "Q2024"
+    }
+]
