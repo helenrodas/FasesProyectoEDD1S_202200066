@@ -17,13 +17,13 @@ module tecnicos_module
 
         contains
         procedure :: insertar, buscarTecnico, imprimirTecnicos
-        procedure, private :: resolver_colision
+        procedure, private :: solve_colision
     end type nodoTabla
 
 contains
     subroutine insertar(self, dpiAsInt, nombre, apellido, direccion, telefonoAsInt, genero)
         class(nodoTabla), intent(inout) :: self
-        type(nodoTabla) :: nueva_tabla
+        type(nodoTabla) :: tablaNueva
         integer(8), intent(in) :: dpiAsInt, telefonoAsInt
         character(:), allocatable::nombre, apellido, direccion, genero
         type(nodoTecnico), allocatable :: arreglo_anterior(:)
@@ -34,9 +34,9 @@ contains
             allocate(self%arreglo(0:size_tabla-1))
             self%arreglo(:)%dpiAsInt = -1
         end if
-        posicion = obtener_posicion(dpiAsInt)
+        posicion = get_posicion(dpiAsInt)
         if(self%arreglo(posicion)%dpiAsInt /= -1 .and. self%arreglo(posicion)%dpiAsInt /= dpiAsInt) then
-            call self%resolver_colision(posicion)
+            call self%solve_colision(posicion)
         end if
         self%arreglo(posicion)%dpiAsInt=dpiAsInt
         self%arreglo(posicion)%nombre=nombre
@@ -49,22 +49,22 @@ contains
         if(porcentaje_utilizado > porcentaje_maximo) then
             arreglo_anterior = self%arreglo
             deallocate(self%arreglo)
-            nueva_tabla = rehashing(arreglo_anterior)
-            self%arreglo = nueva_tabla%arreglo
-            self%elemento = nueva_tabla%elemento
+            tablaNueva = rehashing(arreglo_anterior)
+            self%arreglo = tablaNueva%arreglo
+            self%elemento = tablaNueva%elemento
         end if
     end subroutine insertar
 
-    function rehashing(arreglo_anterior) result(nueva_tabla)
+    function rehashing(arreglo_anterior) result(tablaNueva)
         type(nodoTecnico), intent(in) :: arreglo_anterior(:)
         integer :: i
-        type(nodoTabla) :: nueva_tabla
+        type(nodoTabla) :: tablaNueva
         size_tabla = size_tabla*2
-        allocate(nueva_tabla%arreglo(0:size_tabla-1))
-        nueva_tabla%arreglo(:)%dpiAsInt = -1
+        allocate(tablaNueva%arreglo(0:size_tabla-1))
+        tablaNueva%arreglo(:)%dpiAsInt = -1
         do i = 1, size(arreglo_anterior)
             if(arreglo_anterior(i)%dpiAsInt /= -1) then
-            call nueva_tabla%insertar(arreglo_anterior(i)%dpiAsInt,arreglo_anterior(i)%nombre,&
+            call tablaNueva%insertar(arreglo_anterior(i)%dpiAsInt,arreglo_anterior(i)%nombre,&
             arreglo_anterior(i)%apellido, &
             arreglo_anterior(i)%direccion,&
             arreglo_anterior(i)%telefonoAsInt, arreglo_anterior(i)%genero)
@@ -72,27 +72,28 @@ contains
         end do
     end function rehashing
 
-    subroutine resolver_colision(self, posicion)
+    subroutine solve_colision(self, posicion)
         class(nodoTabla), intent(inout) :: self
         integer(8), intent(inout) :: posicion
         do while(self%arreglo(posicion)%dpiAsInt /= -1)
             posicion = posicion + 1
             posicion = mod(posicion, size_tabla)
         end do
-    end subroutine resolver_colision
+    end subroutine solve_colision
 
-    function obtener_posicion(dpiAsInt) result(posicion)
+    function get_posicion(dpiAsInt) result(posicion)
         integer(8), intent(in) :: dpiAsInt
         integer(8) :: posicion
         posicion = mod(dpiAsInt,size_tabla)
-    end function obtener_posicion
+    end function get_posicion
 
     subroutine buscarTecnico(self, dpiAsInt)
         class(nodoTabla), intent(inout) :: self
         integer(8), intent(in) :: dpiAsInt
         integer(8) :: posicion
-        posicion = obtener_posicion(dpiAsInt)
+        posicion = get_posicion(dpiAsInt)
         if (self%arreglo(posicion)%dpiAsInt == dpiAsInt) then
+        
             print*, 'DPI: ', self%arreglo(posicion)%dpiAsInt
             print*, 'Nombre: ', trim(self%arreglo(posicion)%nombre)
             print*, 'Apellido: ', trim(self%arreglo(posicion)%apellido)
@@ -101,7 +102,7 @@ contains
             print*, 'Telefono: ', self%arreglo(posicion)%telefonoAsInt
             
         else
-            print*, 'Tecnico no encontrado en tabla: ',dpiAsInt
+            print*, 'Tecnico', dpiAsInt ,'no encontrado en tabla: '
         end if
     end subroutine buscarTecnico
 
