@@ -75,7 +75,7 @@ program main
       case(1)
         call op_CargaArchivos()
       case(2)
-        print *, "menu sucursales"
+        call sesion_sucursal()
       case(3)
         print *, "menu reportes"
       case(4)
@@ -111,7 +111,7 @@ program main
       case(1)
         call readSucursales("sucursales")
       case(2)
-        ! call readRutas("rutas")
+        
       case(3)
         print *, "menu salida"
         exit
@@ -120,8 +120,6 @@ program main
       end select
         end do
   end subroutine op_CargaArchivos
-
-
 
   subroutine menu_cargaArchivos()
     print *, "...................................."
@@ -133,6 +131,70 @@ program main
     print *, "...................................."
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_cargaArchivos
+
+
+  subroutine sesion_sucursal()
+    character(len=100) :: usuario, password
+    integer :: id
+    logical :: existeSucursal
+    print *, "--------------------"
+    print *, "Ingrese el ID de la sucursal: "
+    read(*,*) id
+    
+    print *, "Ingrese el password: "
+    read*, password
+
+    password = trim(password)
+    
+    call arbolSucursales%searchSucursal(id,password,existeSucursal)
+    if(existeSucursal) then
+      call op_sucursales()
+    else
+      print*, "sucursal no encontrado..."
+    end if
+  end subroutine sesion_sucursal
+
+
+  subroutine op_sucursales()
+    integer :: option
+    do
+      call menu_sucursales()
+      read(*, *) option
+      
+      select case(option)
+      case(1)
+        print *, "carga tecnicos"
+      case(2)
+        print *, "recorrido optimo"
+      case(3)
+        print *, "informacion tecnico"
+      case(4)
+        print *, "listar tecnicos"
+      case(5)
+        print *, "reportes"
+      case(6)
+        exit
+      case default
+        print *, "Error!. Seleccione una opcion valida."
+      end select
+        end do
+  end subroutine op_sucursales
+
+  subroutine menu_sucursales()
+    print *, "...................................."
+    print *, "          Menu Sucursales        "
+    print *, "...................................."
+    print *, "1. Carga de Tecnicos"
+    print *, "2. Generar recorrido mas optimo"
+    print *, "3. Informacion Tecnico"
+    print *, "4. Listar Tecnicos"
+    print *, "5. Reporte"
+    print *, "6. Salida"
+    print *, "...................................."
+    print *, "Ingrese el numero de la opcion deseada:"
+  end subroutine menu_sucursales
+
+  
 
 
   subroutine readSucursales(nombreArchivo)
@@ -168,7 +230,7 @@ program main
         ! print *, "Departamento:",departamento
         ! print *, "Direccion:",direccion
         ! print *, "Password:",password
-        print *, "----------------------------"
+        ! print *, "----------------------------"
         read(id, *) idAsInt
         call arbolSucursales%insert(idAsInt,departamento,direccion,password)
 

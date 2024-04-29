@@ -16,7 +16,7 @@ module sucursales_module
         procedure :: insert
         procedure :: delete
         procedure :: printABB
-        ! procedure :: buscarId
+        procedure :: searchSucursal
         ! procedure :: existeIDABB
     end type sucursalABB
 
@@ -58,44 +58,48 @@ contains
 !     end function existeNodoID
 ! end subroutine existeIDABB
 
-! subroutine buscarId(self, id,fila,columa,color)
-!     class(sucursalABB), intent(inout) :: self
-!     integer, intent(in) :: id,fila,columa
-!     type(nodeSucursales), pointer :: node
-!     character(len=7) ::color
-
-!     node => existeNodo(self%root, id)
+subroutine searchSucursal(self, id,password,encontrado)
+    class(sucursalABB), intent(inout) :: self
+    integer, intent(in) :: id
+    character(len=*),intent(in)::password
     
-!     if (associated(node)) then
-!     !   print *, "Nodo encontrado"
-!       call insertarEnMatriz(node,fila,columa,color)
-!     else
-!     !   print *, "Nodo no encontrado"
-!     end if
+    type(nodeSucursales), pointer :: node
+    logical, intent(inout) :: encontrado
+    encontrado = .false.
 
-!     contains
 
-!     recursive function existeNodo(root, id) result(node)
-!         type(nodeSucursales), pointer :: root
-!         integer, intent(in) :: id
-!         type(nodeSucursales), pointer :: node
+    node => existeNodo(self%root, id,password)
+    
+    if (associated(node)) then
+        encontrado = .true.
+    else
+        encontrado = .false.
+    end if
 
-!         if (associated(root)) then
-!             if (root%id == id) then
-!                 node => root
-!             else if (id < root%id) then
-!                 node => existeNodo(root%left, id)
-!             else
-!                 node => existeNodo(root%right, id)
-!             end if
-!         else
-!             node => null()
-!         end if
-!     end function existeNodo
+    contains
+
+    recursive function existeNodo(root, id,password) result(node)
+        type(nodeSucursales), pointer :: root
+        integer, intent(in) :: id
+        character(len=*),intent(in)::password
+        type(nodeSucursales), pointer :: node
+
+        if (associated(root)) then
+            if (root%id == id .and. root%password == password) then
+                node => root
+            else if (id < root%id) then
+                node => existeNodo(root%left, id,password)
+            else
+                node => existeNodo(root%right, id,password)
+            end if
+        else
+            node => null()
+        end if
+    end function existeNodo
 
     
     
-! end subroutine buscarId
+ end subroutine searchSucursal
 
 
 
