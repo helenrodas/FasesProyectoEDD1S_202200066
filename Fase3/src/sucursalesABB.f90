@@ -19,6 +19,8 @@ module sucursales_module
         procedure :: delete
         procedure :: printABB
         procedure :: searchSucursal
+        procedure :: insert_tabla
+        procedure :: imprimirTabla
         ! procedure :: existeIDABB
     end type sucursalABB
 
@@ -196,6 +198,76 @@ end subroutine insertRec
     end subroutine getMajorOfMinors
 
 
+    subroutine insert_tabla(self, id, tablaTecnicos)
 
+        class(sucursalABB), intent(inout) :: self
+        integer, intent(in) :: id
+        type(nodoTabla), intent(in) :: tablaTecnicos
+    
+        print *, "Tabla hash por insertar"
+    
+        if(associated(self%root)) then
+            call agregarEnTabla(self%root, id, tablaTecnicos)
+        else
+            print*, "Tabla no insertada, sucursal no encontrada"
+        end if
+    
+    end subroutine insert_tabla
+    
+
+    recursive subroutine agregarEnTabla(root, id, tablaTecnicos)
+        type(nodeSucursales), pointer, intent(inout) :: root
+        integer, intent(in) :: id
+        type(nodoTabla), intent(in) :: tablaTecnicos
+    
+        if (associated(root)) then
+            if (id == root%id) then
+                root%tablaTecnicos = tablaTecnicos
+                print *, "Tabla hash insertada correctamente."
+                print *, ""
+            else if (id < root%id) then
+                call agregarEnTabla(root%left, id, tablaTecnicos)
+            else
+                call agregarEnTabla(root%right, id, tablaTecnicos)
+            end if
+        end if
+    
+    end subroutine agregarEnTabla
+
+
+    subroutine imprimirTabla(self, id)
+
+        class(sucursalABB), intent(inout) :: self
+        integer, intent(in) :: id
+    
+    
+        if(associated(self%root)) then
+            call buscarTablaSucursal(self%root, id)
+        else
+            print*, "sucursal no encontrada"
+        end if
+    
+    end subroutine imprimirTabla
+
+
+    recursive subroutine buscarTablaSucursal(root, id)
+
+        type(nodeSucursales), pointer, intent(inout) :: root
+        integer, intent(in) :: id
+        type(nodoTabla), pointer :: tablaTecnicos
+    
+        if (associated(root)) then
+            if (id == root%id) then
+                tablaTecnicos => root%tablaTecnicos
+                call tablaTecnicos%imprimirTecnicos()
+            else if (id < root%id) then
+                call buscarTablaSucursal(root%left, id)
+            else
+                call buscarTablaSucursal(root%right, id)
+            end if
+        end if
+    
+    end subroutine buscarTablaSucursal
+    
 
 end module sucursales_module

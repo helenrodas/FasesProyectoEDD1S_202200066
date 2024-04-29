@@ -1,6 +1,7 @@
 program main
   use:: json_module
   use:: sucursales_module
+  use :: tecnicos_module
  
   implicit none
   
@@ -13,7 +14,7 @@ program main
   ! type(json_array), pointer :: grafo2
   ! type(json_object), pointer :: item
   logical :: found
-
+  integer :: idAsInt
 
 
   type(sucursalABB) :: arbolSucursales
@@ -138,18 +139,18 @@ program main
 
   subroutine sesion_sucursal()
     character(len=100) ::  password
-    integer :: id
+    
     logical :: existeSucursal
     print *, "--------------------"
     print *, "Ingrese el ID de la sucursal: "
-    read(*,*) id
+    read(*,*) idAsInt
     
     print *, "Ingrese el password: "
     read*, password
 
     password = trim(password)
     
-    call arbolSucursales%searchSucursal(id,password,existeSucursal)
+    call arbolSucursales%searchSucursal(idAsInt,password,existeSucursal)
     if(existeSucursal) then
       call op_sucursales()
     else
@@ -172,7 +173,7 @@ program main
       case(3)
         print *, "informacion tecnico"
       case(4)
-        print *, "listar tecnicos"
+        call arbolSucursales%imprimirTabla(idAsInt)
       case(5)
         print *, "reportes"
       case(6)
@@ -201,7 +202,7 @@ program main
 
 
   subroutine readSucursales(nombreArchivo)
-    integer :: i,idAsInt
+    integer :: i
     character(len=*), intent(in)::nombreArchivo
     character(len=100) :: filename 
 
@@ -243,11 +244,14 @@ end subroutine readSucursales
 
 
 subroutine readTecnicos(nombreArchivo)
-  integer :: i,idAsInt
+
+  integer :: i
   character(len=*), intent(in)::nombreArchivo
   character(len=100) :: filename 
   integer*8 :: dpiAsInt,telefonoAsInt
 
+  type(nodoTabla),pointer :: tablaTecnicos
+  allocate(tablaTecnicos)
 
   print *, "------------Tecnicos---------------"
   call json%initialize()
@@ -280,18 +284,18 @@ subroutine readTecnicos(nombreArchivo)
 
       read(dpi, *) dpiAsInt
       read(telefono, *) telefonoAsInt
-      ! print *, "DPI:",dpi
-      ! print *, "Nombres:",nombre
-      ! print *, "Apellidos:",apellido
-      ! print *, "Genero:",genero
-      ! print *, "Direccion:",direccion
-      ! print *, "Telefono:",telefono
-      ! print *, "----------------------------"
-      call arbolSucursales%root%tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
 
-  end do
-  call arbolSucursales%root%tablaTecnicos%imprimirTecnicos()
+      call tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
+      ! call arbolSucursales%root%tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
+
+  
+    end do
+  ! call arbolSucursales%root%tablaTecnicos%imprimirTecnicos()
   call json%destroy()
+
+  call arbolSucursales%insert_tabla(idAsInt,tablaTecnicos)
+  deallocate(tablaTecnicos)
+
   print*,"Archivo Tecnicos leido exitosamente"
 end subroutine readTecnicos
 
