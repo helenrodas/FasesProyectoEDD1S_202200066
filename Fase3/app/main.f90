@@ -1,6 +1,7 @@
 program main
   use:: json_module
   use:: sucursales_module
+ 
   implicit none
   
   integer :: option,size
@@ -16,6 +17,7 @@ program main
 
 
   type(sucursalABB) :: arbolSucursales
+  
 
   do 
     call menu_inicial()
@@ -135,7 +137,7 @@ program main
 
 
   subroutine sesion_sucursal()
-    character(len=100) :: usuario, password
+    character(len=100) ::  password
     integer :: id
     logical :: existeSucursal
     print *, "--------------------"
@@ -227,11 +229,6 @@ program main
         call jsonc%get_child(animalPointer, 'password', attributePointer, found) 
         call jsonc%get(attributePointer, password)
 
-        ! print *, "ID:",id
-        ! print *, "Departamento:",departamento
-        ! print *, "Direccion:",direccion
-        ! print *, "Password:",password
-        ! print *, "----------------------------"
         read(id, *) idAsInt
         call arbolSucursales%insert(idAsInt,departamento,direccion,password)
 
@@ -249,7 +246,7 @@ subroutine readTecnicos(nombreArchivo)
   integer :: i,idAsInt
   character(len=*), intent(in)::nombreArchivo
   character(len=100) :: filename 
-  integer*8 :: dpiAsInt
+  integer*8 :: dpiAsInt,telefonoAsInt
 
 
   print *, "------------Tecnicos---------------"
@@ -281,17 +278,19 @@ subroutine readTecnicos(nombreArchivo)
       call jsonc%get_child(animalPointer, 'telefono', attributePointer, found) 
       call jsonc%get(attributePointer, telefono)
 
-      ! read(dpi, *) dpiAsInt
-      print *, "DPI:",dpi
-      print *, "Nombres:",nombre
-      print *, "Apellidos:",apellido
-      print *, "Genero:",genero
-      print *, "Direccion:",direccion
-      print *, "Telefono:",telefono
-      print *, "----------------------------"
-      
+      read(dpi, *) dpiAsInt
+      read(telefono, *) telefonoAsInt
+      ! print *, "DPI:",dpi
+      ! print *, "Nombres:",nombre
+      ! print *, "Apellidos:",apellido
+      ! print *, "Genero:",genero
+      ! print *, "Direccion:",direccion
+      ! print *, "Telefono:",telefono
+      ! print *, "----------------------------"
+      call arbolSucursales%root%tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
 
   end do
+  call arbolSucursales%root%tablaTecnicos%imprimirTecnicos()
   call json%destroy()
   print*,"Archivo Tecnicos leido exitosamente"
 end subroutine readTecnicos

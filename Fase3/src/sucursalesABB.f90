@@ -1,4 +1,5 @@
 module sucursales_module
+    use :: tecnicos_module
     implicit none
     private
 
@@ -7,6 +8,7 @@ module sucursales_module
         character(len=:), allocatable :: departamento,direccion,password
         type(nodeSucursales), pointer :: right => null()
         type(nodeSucursales), pointer :: left => null()
+        type(nodoTabla) :: tablaTecnicos
     end type nodeSucursales
 
     type, public :: sucursalABB
