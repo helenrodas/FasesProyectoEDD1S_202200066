@@ -23,41 +23,6 @@ module sucursales_module
 contains   
 
 
-! subroutine existeIDABB(self, id, encontrado)
-!     class(sucursalABB), intent(inout) :: self
-!     integer, intent(in) :: id
-!     logical, intent(out) :: encontrado
-!     type(nodeSucursales), pointer :: node
-
-!     node => existeNodoID(self%root, id)
-    
-!     if (associated(node)) then
-!       encontrado = .true.
-!     else
-!       encontrado = .false.
-!     end if
-
-!     contains
-
-!     recursive function existeNodoID(root, id) result(node)
-!         type(nodeSucursales), pointer :: root
-!         integer, intent(in) :: id
-!         type(nodeSucursales), pointer :: node
-
-!         if (associated(root)) then
-!             if (root%id == id) then
-!                 node => root
-!             else if (id < root%id) then
-!                 node => existeNodoID(root%left, id)
-!             else
-!                 node => existeNodoID(root%right, id)
-!             end if
-!         else
-!             node => null()
-!         end if
-!     end function existeNodoID
-! end subroutine existeIDABB
-
 subroutine searchSucursal(self, id,password,encontrado)
     class(sucursalABB), intent(inout) :: self
     integer, intent(in) :: id

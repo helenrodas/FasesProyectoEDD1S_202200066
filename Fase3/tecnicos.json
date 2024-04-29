@@ -1,0 +1,26 @@
+[
+    {
+        "dpi":"1234567890123",
+        "nombre": "Juan Pablo",
+        "apellido":"Gonzales Carillo",
+        "genero":"Masculino",
+        "direccion":"8 calle 3-45 zona 1",
+        "telefono": 12345678
+    },
+    {
+        "dpi":"3474567890123",
+        "nombre": "Maria Jose",
+        "apellido":"Portillo Velasquez",
+        "genero":"Femenino",
+        "direccion":"6 calle 8-40 Villa Nueva",
+        "telefono": 12345677
+    },
+    {
+        "dpi":"6789067890123",
+        "nombre": "Mario Jose",
+        "apellido":"Mendez Perez",
+        "genero":"Masculino",
+        "direccion":"5 calle 0-45 zona 4",
+        "telefono": 12345378
+    }
+]

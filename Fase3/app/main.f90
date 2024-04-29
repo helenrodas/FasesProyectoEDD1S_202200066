@@ -4,7 +4,7 @@ program main
   implicit none
   
   integer :: option,size
-  character(:), allocatable :: id, departamento,direccion ,password
+  character(:), allocatable :: id, departamento,direccion ,password,nombre,apellido,genero,telefono,dpi
   integer :: i, s1, s2, distancia, imp_mantenimiento
   type(json_file) :: json
   type(json_core) :: jsonc
@@ -12,6 +12,7 @@ program main
   ! type(json_array), pointer :: grafo2
   ! type(json_object), pointer :: item
   logical :: found
+
 
 
   type(sucursalABB) :: arbolSucursales
@@ -163,7 +164,7 @@ program main
       
       select case(option)
       case(1)
-        print *, "carga tecnicos"
+        call readTecnicos("tecnicos")
       case(2)
         print *, "recorrido optimo"
       case(3)
@@ -242,6 +243,61 @@ end subroutine readSucursales
 
 
 
+
+
+subroutine readTecnicos(nombreArchivo)
+  integer :: i,idAsInt
+  character(len=*), intent(in)::nombreArchivo
+  character(len=100) :: filename 
+  integer*8 :: dpiAsInt
+
+
+  print *, "------------Tecnicos---------------"
+  call json%initialize()
+  filename = trim(nombreArchivo) // '.json'
+  call json%load(filename=filename)
+  call json%info('',n_children=size)
+  call json%get_core(jsonc)
+  call json%get('', listPointer, found)
+
+  do i = 1, size
+      call jsonc%get_child(listPointer, i, animalPointer, found)
+
+      call jsonc%get_child(animalPointer, 'dpi', attributePointer, found)
+      call jsonc%get(attributePointer, dpi)
+
+      call jsonc%get_child(animalPointer, 'nombre', attributePointer, found)
+      call jsonc%get(attributePointer, nombre)
+
+      call jsonc%get_child(animalPointer, 'apellido', attributePointer, found)
+      call jsonc%get(attributePointer, apellido)
+
+      call jsonc%get_child(animalPointer, 'genero', attributePointer, found) 
+      call jsonc%get(attributePointer, genero)
+
+      call jsonc%get_child(animalPointer, 'direccion', attributePointer, found) 
+      call jsonc%get(attributePointer, direccion)
+
+      call jsonc%get_child(animalPointer, 'telefono', attributePointer, found) 
+      call jsonc%get(attributePointer, telefono)
+
+      ! read(dpi, *) dpiAsInt
+      print *, "DPI:",dpi
+      print *, "Nombres:",nombre
+      print *, "Apellidos:",apellido
+      print *, "Genero:",genero
+      print *, "Direccion:",direccion
+      print *, "Telefono:",telefono
+      print *, "----------------------------"
+      
+
+  end do
+  call json%destroy()
+  print*,"Archivo Tecnicos leido exitosamente"
+end subroutine readTecnicos
+
+
+
 ! subroutine readRutas(nombreArchivo)
 !   character(len=*), intent(in) :: nombreArchivo
 !   character(len=100) :: filename
@@ -282,8 +338,6 @@ end subroutine readSucursales
 
 !   print *, "Archivo grafo leído exitosamente"
 ! end subroutine readRutas
-
-
 
 
 
