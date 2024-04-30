@@ -21,6 +21,7 @@ module sucursales_module
         procedure :: searchSucursal
         procedure :: insert_tabla
         procedure :: imprimirTabla
+        procedure :: getTablaSucursal
         ! procedure :: existeIDABB
     end type sucursalABB
 
@@ -269,5 +270,42 @@ end subroutine insertRec
     
     end subroutine buscarTablaSucursal
     
+
+    
+    subroutine getTablaSucursal(self, idSucursal,dpiTecnico)
+
+        class(sucursalABB), intent(inout) :: self
+        integer, intent(in) :: idSucursal
+        integer*8,intent(in) :: dpiTecnico
+    
+    
+        if(associated(self%root)) then
+            call buscarEnTablaTecnico(self%root, idSucursal,dpiTecnico)
+        else
+            print*, "Tabla de sucursal no encontrada"
+        end if
+    
+    end subroutine getTablaSucursal
+
+
+    recursive subroutine buscarEnTablaTecnico(root, idSucursal,dpiTecnico)
+
+        type(nodeSucursales), pointer, intent(inout) :: root
+        integer, intent(in) :: idSucursal
+        integer*8,intent(in) :: dpiTecnico
+        type(nodoTabla), pointer :: tablaTecnicos
+    
+        if (associated(root)) then
+            if (idSucursal == root%id) then
+                tablaTecnicos => root%tablaTecnicos
+                call tablaTecnicos%buscarTecnico(dpiTecnico)
+            else if (idSucursal < root%id) then
+                call buscarEnTablaTecnico(root%left, idSucursal,dpiTecnico)
+            else
+                call buscarEnTablaTecnico(root%right, idSucursal,dpiTecnico)
+            end if
+        end if
+    
+    end subroutine buscarEnTablaTecnico
 
 end module sucursales_module

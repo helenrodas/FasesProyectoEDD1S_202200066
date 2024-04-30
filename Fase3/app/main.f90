@@ -171,7 +171,7 @@ program main
       case(2)
         print *, "recorrido optimo"
       case(3)
-        print *, "informacion tecnico"
+        call buscarTecnico()
       case(4)
         call arbolSucursales%imprimirTabla(idAsInt)
       case(5)
@@ -198,7 +198,19 @@ program main
     print *, "Ingrese el numero de la opcion deseada:"
   end subroutine menu_sucursales
 
-  
+
+
+  subroutine buscarTecnico()
+    character(len=100) ::  password
+    integer*8 :: dpiAsInt
+    logical :: existeSucursal
+    print *, "--------------------"
+    print *, "Ingrese el DPI del tecnico: "
+    read(*,*) dpiAsInt
+
+    call arbolSucursales%getTablaSucursal(idAsInt,dpiAsInt)
+
+  end subroutine buscarTecnico
 
 
   subroutine readSucursales(nombreArchivo)
@@ -286,11 +298,8 @@ subroutine readTecnicos(nombreArchivo)
       read(telefono, *) telefonoAsInt
 
       call tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
-      ! call arbolSucursales%root%tablaTecnicos%insertar(dpiAsInt,nombre,apellido,direccion,telefonoAsInt,genero)
-
   
     end do
-  ! call arbolSucursales%root%tablaTecnicos%imprimirTecnicos()
   call json%destroy()
 
   call arbolSucursales%insert_tabla(idAsInt,tablaTecnicos)

@@ -87,24 +87,53 @@ contains
         posicion = mod(dpiAsInt,size_tabla)
     end function get_posicion
 
+    ! subroutine buscarTecnico(self, dpiAsInt)
+    !     class(nodoTabla), intent(inout) :: self
+    !     integer(8), intent(in) :: dpiAsInt
+    !     integer(8) :: posicion
+    !     posicion = get_posicion(dpiAsInt)
+    !     if (self%arreglo(posicion)%dpiAsInt == dpiAsInt) then
+        
+    !         print*, 'DPI: ', self%arreglo(posicion)%dpiAsInt
+    !         print*, 'Nombre: ', trim(self%arreglo(posicion)%nombre)
+    !         print*, 'Apellido: ', trim(self%arreglo(posicion)%apellido)
+    !         print*, 'Genero: ', trim(self%arreglo(posicion)%genero)
+    !         print*, 'Direccion: ', trim(self%arreglo(posicion)%direccion)
+    !         print*, 'Telefono: ', self%arreglo(posicion)%telefonoAsInt
+            
+    !     else
+    !         print*, 'Tecnico', dpiAsInt ,'no encontrado en tabla: '
+    !     end if
+    ! end subroutine buscarTecnico
+
     subroutine buscarTecnico(self, dpiAsInt)
         class(nodoTabla), intent(inout) :: self
         integer(8), intent(in) :: dpiAsInt
         integer(8) :: posicion
+        if (.not. allocated(self%arreglo)) then
+            print*, 'No Existen Tecnicos Registrados.'
+            return
+        end if
         posicion = get_posicion(dpiAsInt)
+        do while (self%arreglo(posicion)%dpiAsInt /= dpiAsInt .and. self%arreglo(posicion)%dpiAsInt /= -1)
+            posicion = posicion + 1
+            posicion = mod(posicion, size_tabla)
+        end do
         if (self%arreglo(posicion)%dpiAsInt == dpiAsInt) then
-        
             print*, 'DPI: ', self%arreglo(posicion)%dpiAsInt
             print*, 'Nombre: ', trim(self%arreglo(posicion)%nombre)
             print*, 'Apellido: ', trim(self%arreglo(posicion)%apellido)
-            print*, 'Genero: ', trim(self%arreglo(posicion)%genero)
             print*, 'Direccion: ', trim(self%arreglo(posicion)%direccion)
             print*, 'Telefono: ', self%arreglo(posicion)%telefonoAsInt
-            
+            print*, 'Genero: ', trim(self%arreglo(posicion)%genero)
         else
-            print*, 'Tecnico', dpiAsInt ,'no encontrado en tabla: '
+            print*, 'No Existe Un Tecnico Con DPI: ',dpiAsInt
         end if
     end subroutine buscarTecnico
+
+
+
+
 
     subroutine imprimirTecnicos(self)
         class(nodoTabla), intent(inout) :: self
