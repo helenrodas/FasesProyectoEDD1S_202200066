@@ -87,25 +87,6 @@ contains
         posicion = mod(dpiAsInt,size_tabla)
     end function get_posicion
 
-    ! subroutine buscarTecnico(self, dpiAsInt)
-    !     class(nodoTabla), intent(inout) :: self
-    !     integer(8), intent(in) :: dpiAsInt
-    !     integer(8) :: posicion
-    !     posicion = get_posicion(dpiAsInt)
-    !     if (self%arreglo(posicion)%dpiAsInt == dpiAsInt) then
-        
-    !         print*, 'DPI: ', self%arreglo(posicion)%dpiAsInt
-    !         print*, 'Nombre: ', trim(self%arreglo(posicion)%nombre)
-    !         print*, 'Apellido: ', trim(self%arreglo(posicion)%apellido)
-    !         print*, 'Genero: ', trim(self%arreglo(posicion)%genero)
-    !         print*, 'Direccion: ', trim(self%arreglo(posicion)%direccion)
-    !         print*, 'Telefono: ', self%arreglo(posicion)%telefonoAsInt
-            
-    !     else
-    !         print*, 'Tecnico', dpiAsInt ,'no encontrado en tabla: '
-    !     end if
-    ! end subroutine buscarTecnico
-
     subroutine buscarTecnico(self, dpiAsInt)
         class(nodoTabla), intent(inout) :: self
         integer(8), intent(in) :: dpiAsInt
@@ -132,23 +113,40 @@ contains
     end subroutine buscarTecnico
 
 
-
+    ! subroutine imprimirTecnicos(self)
+    !     class(nodoTabla), intent(inout) :: self
+    !     integer :: i
+    !     do i = 0, size(self%arreglo)-1
+    !         if (self%arreglo(i)%dpiAsInt /= -1) then
+    !             print*, 'Posicion: ', i
+    !             print*, 'DPI: ', self%arreglo(i)%dpiAsInt
+    !             print*, 'Nombre: ', trim(self%arreglo(i)%nombre)
+    !             print*, 'Apellido: ', trim(self%arreglo(i)%apellido)
+    !             print*, 'Genero: ', trim(self%arreglo(i)%genero)
+    !             print*, 'Direccion: ', trim(self%arreglo(i)%direccion)
+    !             print*, 'Telefono: ', self%arreglo(i)%telefonoAsInt
+                
+    !             print*, '------------------------'
+    !         end if
+    !     end do
+    ! end subroutine imprimirTecnicos
 
 
     subroutine imprimirTecnicos(self)
         class(nodoTabla), intent(inout) :: self
         integer :: i
+    
+        print '(1x, A, 5x, A, 5x, A, 5x, A, 5x, A, 5x, A, 5x, A)', &
+            "Posicion", "DPI", "Nombre", "Apellido", "Genero", "Direccion", "Telefono"
+    
+        print '(1x, A)', repeat("-", 80)
+    
         do i = 0, size(self%arreglo)-1
             if (self%arreglo(i)%dpiAsInt /= -1) then
-                print*, 'Posicion: ', i
-                print*, 'DPI: ', self%arreglo(i)%dpiAsInt
-                print*, 'Nombre: ', trim(self%arreglo(i)%nombre)
-                print*, 'Apellido: ', trim(self%arreglo(i)%apellido)
-                print*, 'Genero: ', trim(self%arreglo(i)%genero)
-                print*, 'Direccion: ', trim(self%arreglo(i)%direccion)
-                print*, 'Telefono: ', self%arreglo(i)%telefonoAsInt
-                
-                print*, '------------------------'
+                print '(1x, I0, 5x, I0, 5x, A, 5x, A, 5x, A, 5x, A, 5x, I0)', &
+                    i, self%arreglo(i)%dpiAsInt, trim(self%arreglo(i)%nombre), &
+                    trim(self%arreglo(i)%apellido), trim(self%arreglo(i)%genero), &
+                    trim(self%arreglo(i)%direccion), self%arreglo(i)%telefonoAsInt
             end if
         end do
     end subroutine imprimirTecnicos
